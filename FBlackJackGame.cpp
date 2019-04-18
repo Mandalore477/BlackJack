@@ -135,9 +135,9 @@ void FBlackJackGame::SetCurrentCard()
 	currentCard=currentCard+1;
 }
 
-void FBlackJackGame::AddCurrentCard(int32 cardsFromHit)
+void FBlackJackGame::AddCurrentCard()
 {
-	currentCard = currentCard + cardsFromHit;
+	currentCard++;
 }
 
 void FBlackJackGame::NumberOfPlayers()

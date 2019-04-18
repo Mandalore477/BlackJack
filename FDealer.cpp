@@ -30,9 +30,8 @@ void FDealer::Hit(Card hand[], Card deck[], int currentCard)
 		}
 		else
 		{
-			SetCardInHand();
 			hand[cardInHand] = deck[currentCard];
-			currentCard++;
+			SetCardInHand(1);
 		}
 		if (handTotal < 21)
 		{
@@ -61,13 +60,12 @@ int FDealer::CalculateValue(Card hand[])
 
 int FDealer::GetCardInHand()
 {
-	cardInHand -= 2;
 	return cardInHand;
 }
 
-void FDealer::SetCardInHand()
+void FDealer::SetCardInHand(int value)
 {
-	cardInHand++;
+	cardInHand+= value;
 }
 
 bool FDealer::CheckInsurance(Card hand[])
@@ -85,6 +83,16 @@ bool FDealer::CheckInsurance(Card hand[])
 bool FDealer::IsDealerBust()
 {
 	return bust;
+}
+
+bool FDealer::GetStay()
+{
+	return stay;
+}
+
+void FDealer::ResetStay()
+{
+	stay = false;
 }
 
 void FDealer::DisplayDealerPre(Card hand[])

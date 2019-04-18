@@ -21,11 +21,13 @@ public:
 	void Hit(Card hand[], Card deck[], int currentCard);
 	int CalculateValue(Card hand[]);
 	int GetCardInHand();
-	void SetCardInHand();
+	void SetCardInHand(int value);
 	void DisplayDealerPre(Card hand[]);
 	void DisplayDealerPost(Card hand[]);
 	bool CheckInsurance(Card hand[]);
 	bool IsDealerBust();
+	bool GetStay();
+	void ResetStay();
 
 	Card blank;
 	Card hand[];

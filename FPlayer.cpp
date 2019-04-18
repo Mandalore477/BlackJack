@@ -30,66 +30,7 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 		}
 		else
 		{
-			char response;
-			if (bet > chips)
-			{
-				do
-				{
-					std::cout << "not enough chips for double down" << std::endl;
-					std::cout << "A: Hit   S:Stay       F:Surrender ";
-					std::cin >> response;
-					response = tolower(response);
-				} while (response != 'a' && response != 's' && response != 'f');
-				if (response == 'a')
-				{
-					Hit(hand, deck, currentCard);
-				}
-				else if (response == 'f')
-				{
-					std::cout << "You surrender. You get " << (bet / 2) << " Chips back" << std::endl;
-					GetWinnings((bet / 2));
-					stay = true;
-					bet = 0;
-				}
-				else
-				{
-					std::cout << "You Stay" << std::endl;
-					stay = true;
-				}
-			}
-			else
-			{
-				do
-				{
-					std::cout << "A: Hit   S:Stay    D:DoubleDown    F:Surrender ";
-					std::cin >> response;
-					response = tolower(response);
-				} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
-				if (response == 'd')
-				{
-					Hit(hand, deck, currentCard);
-					std::cout << "You double down" << std::endl;
-					bet += bet;
-					stay = true;
-					splitResults[GetSplitNum()][1] = 1;
-				}
-				else if (response == 'a')
-				{
-					Hit(hand, deck, currentCard);
-				}
-				else if (response == 'f')
-				{
-					std::cout << "You surrender. You get " << (bet / 2) << " Chips back" << std::endl;
-					GetWinnings((bet / 2));
-					stay = true;
-					bet = 0;
-				}
-				else
-				{
-					std::cout << "You Stay" << std::endl;
-					stay = true;
-				}
-			}
+			DoubleDownOpt(hand, deck, currentCard);
 		}
 
 	}
@@ -164,13 +105,12 @@ int FPlayer::CalculateValue(Card hand[])
 //return extra cards minus the original 2 dealt
 int FPlayer::GetCardInHand()
 {
-	cardInHand -= 2;
 	return cardInHand;
 }
 // add one to cardinhand
-void FPlayer::SetCardInHand()
+void FPlayer::SetCardInHand(int value)
 {
-	cardInHand++;
+	cardInHand += value;
 }
 
 void FPlayer::MakeBet()
@@ -309,6 +249,7 @@ void FPlayer::ResetSplit()
 	splitPush = 0;
 	splitLosses = 0;
 	bet = 0;
+	stay = false;
 }
 
 bool FPlayer::GetStay()
@@ -318,14 +259,77 @@ bool FPlayer::GetStay()
 
 void FPlayer::Hit(Card hand[], Card deck[], int currentCard)
 {
-	SetCardInHand();
 	hand[cardInHand] = deck[currentCard];
-	currentCard++;
+	SetCardInHand(1);
 }
 
 bool FPlayer::IsPlayerBust()
 {
 	return bust;
+}
+
+void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard)
+{
+	char response;
+	if (bet > chips)
+	{
+		do
+		{
+			std::cout << "not enough chips for double down" << std::endl;
+			std::cout << "A: Hit   S:Stay       F:Surrender ";
+			std::cin >> response;
+			response = tolower(response);
+		} while (response != 'a' && response != 's' && response != 'f');
+		if (response == 'a')
+		{
+			Hit(hand, deck, currentCard);
+		}
+		else if (response == 'f')
+		{
+			std::cout << "You surrender. You get " << (bet / 2) << " Chips back" << std::endl;
+			GetWinnings((bet / 2));
+			stay = true;
+			bet = 0;
+		}
+		else
+		{
+			std::cout << "You Stay" << std::endl;
+			stay = true;
+		}
+	}
+	else
+	{
+		do
+		{
+			std::cout << "A: Hit   S:Stay    D:DoubleDown    F:Surrender ";
+			std::cin >> response;
+			response = tolower(response);
+		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
+		if (response == 'd')
+		{
+			Hit(hand, deck, currentCard);
+			std::cout << "You double down" << std::endl;
+			bet += bet;
+			stay = true;
+			splitResults[GetSplitNum()][1] = 1;
+		}
+		else if (response == 'a')
+		{
+			Hit(hand, deck, currentCard);
+		}
+		else if (response == 'f')
+		{
+			std::cout << "You surrender. You get " << (bet / 2) << " Chips back" << std::endl;
+			GetWinnings((bet / 2));
+			stay = true;
+			bet = 0;
+		}
+		else
+		{
+			std::cout << "You Stay" << std::endl;
+			stay = true;
+		}
+	}
 }
 
 

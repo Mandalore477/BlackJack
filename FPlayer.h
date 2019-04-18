@@ -29,7 +29,7 @@ public:
 	void Play(Card hand[], Card deck[],int currentCard);
 	int CalculateValue(Card hand[]);
 	int GetCardInHand();
-	void SetCardInHand();
+	void SetCardInHand(int value);
 	void MakeBet();
 	int GetBet();
 	void GetWinnings(int winnings);
@@ -45,6 +45,7 @@ public:
 	bool GetStay();
 	void Hit(Card hand[], Card deck[], int currentCard);
 	bool IsPlayerBust();
+	void DoubleDownOpt(Card hand[],Card deck[],int currentCard);
 
 	Card blank;
 	Card hand[];

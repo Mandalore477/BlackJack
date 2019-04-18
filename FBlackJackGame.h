@@ -36,7 +36,7 @@ public:
 	int32 GetDeckSize() const;
 	int32 GetCurrentCard();
 	void SetCurrentCard();
-	void AddCurrentCard(int32 cardsFromHit);
+	void AddCurrentCard();
 	void NumberOfPlayers();
 	void ResetCurCard();
 	bool GetIsPlay();

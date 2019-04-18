@@ -27,23 +27,35 @@ int main()
 	Card dealerHand[5];
 	Player.GetWinnings(1000);
 	
-	while (BJGame.GetCurrentCard() < 30 && !BJGame.GetIsPlay())
+	while (BJGame.GetCurrentCard() < 150 && !BJGame.GetIsPlay())
 	{
 		ResetHands(playerHand, dealerHand);
 		Player.MakeBet();
 		system("cls");
 		
 		Deal(deck, playerHand, dealerHand);
-		//if (Player.IsSplit(playerHand,Player.GetChips(),Player.GetBet()))
-		//{
-		//	SplitPlayer(playerHand, deck);
-		//}
-		Player.Play(playerHand, deck, BJGame.GetCurrentCard());
-		BJGame.AddCurrentCard(Player.GetCardInHand());
-
-		Dealer.Hit(dealerHand, deck, BJGame.GetCurrentCard());
-		BJGame.AddCurrentCard(Dealer.GetCardInHand());
-
+		Player.SetCardInHand(2);
+			//if (Player.IsSplit(playerHand,Player.GetChips(),Player.GetBet()))
+			//{
+			//	SplitPlayer(playerHand, deck);
+			//}
+		while (!Player.GetStay())
+		{
+			Player.Play(playerHand, deck, BJGame.GetCurrentCard());
+			system("cls");
+			BJGame.AddCurrentCard();
+			Player.DisplayPlayer(playerHand);
+			Dealer.DisplayDealerPre(dealerHand);
+		}
+		while (!Dealer.GetStay())
+		{
+			Dealer.Hit(dealerHand, deck, BJGame.GetCurrentCard());
+			system("cls");
+			BJGame.AddCurrentCard();
+			Player.DisplayPlayer(playerHand);
+			Dealer.DisplayDealerPost(dealerHand);
+		
+		}
 		system("pause");
 	}
 	return 0;
@@ -56,6 +68,9 @@ void ResetHands(Card playerHand[], Card dealerHand[])
 		playerHand[i] = Player.blank;
 		dealerHand[i] = Dealer.blank;
 		Player.ResetSplit();
+		Player.SetCardInHand((0 - Player.GetCardInHand()));
+		Dealer.SetCardInHand((0 - Dealer.GetCardInHand()));
+		Dealer.ResetStay();
 
 	}
 }
