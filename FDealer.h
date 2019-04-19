@@ -30,7 +30,7 @@ public:
 	void ResetStay();
 
 	Card blank;
-	Card hand[];
+	Card hand[5];
 
 };
 

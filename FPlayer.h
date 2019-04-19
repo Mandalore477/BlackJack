@@ -22,6 +22,7 @@ private:
 	int splitWins = 0;
 	int splitPush = 0;
 	int splitLosses = 0;
+	bool isSplit;
 	
 public:
 	FPlayer();
@@ -34,7 +35,7 @@ public:
 	int GetBet();
 	void GetWinnings(int winnings);
 	void DisplayPlayer(Card hand[]);
-	bool IsSplit(Card hand[],int chips, int bet);
+	void Split(Card hand[],int chips, int bet);
 	int GetChips();
 	void ReBet();
 	void CheckSplitResults(int dealerValue,bool dealerBust);
@@ -46,9 +47,10 @@ public:
 	void Hit(Card hand[], Card deck[], int currentCard);
 	bool IsPlayerBust();
 	void DoubleDownOpt(Card hand[],Card deck[],int currentCard);
+	bool IsSplit();
 
 	Card blank;
-	Card hand[];
+	Card hand[5];
 
 
 

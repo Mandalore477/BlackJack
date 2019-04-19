@@ -154,15 +154,15 @@ void FPlayer::DisplayPlayer(Card hand[])
 	
 }
 
-bool FPlayer::IsSplit(Card hand[],int chips, int bet)
+void FPlayer::Split(Card hand[],int chips, int bet)
 {
-	bool split = false;
-	char response = 'a';
-	if (hand[0].value = hand[1].value)
+	isSplit = false;
+	char response = ' ';
+	if (hand[0].value == hand[1].value)
 	{
 		if (bet <= chips)
 		{
-			while (response != 'y' || response != 'n')
+			while (response != 'y' && response != 'n')
 			{
 				std::cout << "would you like to split (Y/N)" << std::endl;
 				std::cin >> response;
@@ -170,7 +170,8 @@ bool FPlayer::IsSplit(Card hand[],int chips, int bet)
 			}
 			if (response == 'y')
 			{
-				split = true;
+				isSplit = true;
+				ReBet();
 			}
 		}
 		else
@@ -178,7 +179,6 @@ bool FPlayer::IsSplit(Card hand[],int chips, int bet)
 			std::cout << "Not enough chips to split" << std::endl;
 		}
 	}
-	return split;
 }
 
 int FPlayer::GetChips()
@@ -330,6 +330,11 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard)
 			stay = true;
 		}
 	}
+}
+
+bool FPlayer::IsSplit()
+{
+	return isSplit;
 }
 
 
