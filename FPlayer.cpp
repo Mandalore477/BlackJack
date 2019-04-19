@@ -61,20 +61,13 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 			char response;
 			do
 			{
-				std::cout << "A: Hit   S:Stay       F:Surrender ";
+				std::cout << "A: Hit   S:Stay   ";
 				std::cin >> response;
 				response = tolower(response);
-			} while (response != 'a' && response != 's' && response != 'f');
+			} while (response != 'a' && response != 's');
 			if (response == 'a')
 			{
 				Hit(hand, deck, currentCard);
-			}
-			else if(response == 'f')
-			{
-				std::cout << "You surrender. You get "<< (bet/2)<<" Chips back" << std::endl;
-				GetWinnings((bet / 2));
-				stay = true;
-				bet = 0;
 			}
 			else
 			{
@@ -95,6 +88,7 @@ int FPlayer::CalculateValue(Card hand[])
 			if (hand[i].value == 11)
 			{
 				hand[i].value = 1;
+				break;
 			}
 		}
 		value = hand[0].value + hand[1].value + hand[2].value + hand[3].value + hand[4].value;

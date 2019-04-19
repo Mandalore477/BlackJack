@@ -51,7 +51,7 @@ public:
 
 	Card blank;
 	Card hand[5];
-
+	Card splitHand[5];
 
 
 
