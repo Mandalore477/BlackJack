@@ -17,22 +17,7 @@ int main()
 	BJGame.SetGame();
 	BJGame.PlayGame();
 	
-
 	return 0;
 }
 
 
-
-
-//
-//void Result()
-//{
-//	if (!Player.IsPlayerBust||Player.GetSplitNum()>0)
-//	{
-//
-//	}
-//	if (Player.IsPlayerBust() && Dealer.IsDealerBust())
-//	{
-//
-//	}
-//}

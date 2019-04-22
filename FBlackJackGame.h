@@ -44,6 +44,10 @@ public:
 	void Deal(Card Deck[], Card playerHand[], Card dealerHand[]);
 	void ResetHands(Card playerHand[], Card dealerHand[], Card playSplitHand[]);
 	void PlayGame();
+	void Results();
+	void DealerPlay();
+	bool CheckPush(Card hand[], Card dealerhand[]);
+	bool CheckWin(Card hand[], Card dealerhand[]);
 	
 	
 	int32 numberOfPlayers;

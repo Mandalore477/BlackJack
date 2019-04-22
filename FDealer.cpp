@@ -33,7 +33,7 @@ void FDealer::Hit(Card hand[], Card deck[], int currentCard)
 			hand[cardInHand] = deck[currentCard];
 			SetCardInHand(1);
 		}
-		if (handTotal < 21)
+		if (handTotal > 21)
 		{
 			bust = true;
 		}
