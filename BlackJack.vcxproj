@@ -121,6 +121,7 @@
     <ClCompile Include="FPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CardStruct.h" />
     <ClInclude Include="FBlackJackGame.h" />
     <ClInclude Include="FDealer.h" />
     <ClInclude Include="FPlayer.h" />

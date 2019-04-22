@@ -1,7 +1,7 @@
 #pragma once
-#include"FBlackJackGame.h"
 #include<iostream>
 #include<string>
+#include"CardStruct.h"
 
 
 
@@ -15,7 +15,7 @@ private:
 	int cardInHand;
 	bool playerIsActive;
 	FString playerName;
-	int chips;
+	int chips = 1000;
 	int bet;
 	bool isSplit;
 	bool splitStay;
@@ -30,7 +30,6 @@ public:
 	void SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentCard);
 	int CalculateValue(Card hand[]);
 	int GetCardInHand(Card hand[]);
-	void SetCardInHand(int value);
 	void MakeBet();
 	int GetBet();
 	void GetWinnings(int winnings);
@@ -39,12 +38,13 @@ public:
 	bool IsSplit(Card hand[],int chips, int bet);
 	int GetChips();
 	void ReBet();
+	void ResetPlayer(Card hand[], Card splitHand[]);
 
 	bool GetStay();
-	void Hit(Card hand[], Card deck[], int currentCard);
+	void Hit(Card hand[], Card deck[], int currentCard,int cardInHand);
 	bool IsPlayerBust();
 	bool GetSplitHandBust();
-	void DoubleDownOpt(Card hand[],Card deck[],int currentCard);
+	void DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInHand);
 	int GetSplitValue();
 
 

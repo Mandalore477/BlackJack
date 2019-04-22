@@ -1,5 +1,5 @@
 #include "FDealer.h"
-#include"FBlackJackGame.h"
+#include"CardStruct.h"
 
 
 

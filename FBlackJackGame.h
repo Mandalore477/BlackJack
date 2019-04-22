@@ -3,18 +3,13 @@
 #include <stdio.h>      /* printf, NULL */
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include"CardStruct.h"
+#include"FPlayer.h"
+#include"FDealer.h"
 
 // to make the syntax unreal friendly
-using FString = std::string;
+
 using int32 = int;
-
-struct Card
-{
-	int32 value = 0;
-	FString suit = " ";
-	FString face = " ";
-};
-
 
 
 
@@ -27,6 +22,10 @@ private:
 	int32 currentCard;
 	Card blank;
 	bool isPlay;
+	Card deck[312];
+	Card playerHand[5];
+	Card dealerHand[5];
+	Card playSplitHand[5];
 
 
 public:
@@ -41,6 +40,10 @@ public:
 	void ResetCurCard();
 	bool GetIsPlay();
 	void SetIsPlay(bool play);
+	void SetGame();
+	void Deal(Card Deck[], Card playerHand[], Card dealerHand[]);
+	void ResetHands(Card playerHand[], Card dealerHand[], Card playSplitHand[]);
+	void PlayGame();
 	
 	
 	int32 numberOfPlayers;
