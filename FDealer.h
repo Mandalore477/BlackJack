@@ -13,6 +13,7 @@ private:
 	int value;
 	int cardInHand;
 	bool playerIsActive;
+	bool blackJack;
 
 public:
 	FDealer();
@@ -28,6 +29,8 @@ public:
 	bool IsDealerBust();
 	bool GetStay();
 	void ResetStay();
+	bool IsBlackJack();
+	void SetBlackJack(bool blackJack);
 
 	Card blank;
 	Card hand[5];

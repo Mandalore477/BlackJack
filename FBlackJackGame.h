@@ -38,6 +38,7 @@ public:
 	void AddCurrentCard();
 	void NumberOfPlayers();
 	void ResetCurCard();
+	void Insurance();
 	bool GetIsPlay();
 	void SetIsPlay(bool play);
 	void SetGame();
@@ -46,8 +47,8 @@ public:
 	void PlayGame();
 	void Results();
 	void DealerPlay();
-	bool CheckPush(Card hand[], Card dealerhand[]);
-	bool CheckWin(Card hand[], Card dealerhand[]);
+	bool CheckPush(Card hand[]);
+	bool CheckWin(Card hand[]);
 	
 	
 	int32 numberOfPlayers;

@@ -152,6 +152,63 @@ void FBlackJackGame::ResetCurCard()
 	currentCard = 0;
 }
 
+void FBlackJackGame::Insurance()
+{
+	char response=' ';
+	if (Player.GetBet() / 2 < Player.GetChips())
+	{
+		while (response != 'y' && response != 'n')
+		{
+			std::cout << "Would you like to purchase Insurance Y/N";
+			std::cin >> response;
+			response = tolower(response);
+		}
+		if (response == 'y')
+		{
+			Player.ReBet();
+			Player.GetWinnings(Player.GetBet() / 2);
+		}
+	}
+	else
+	{
+		std::cout << "Not enough chips for Insurance" << std::endl;
+	}
+		if (dealerHand[1].value == 10)
+		{
+			system("cls");
+			if (response == 'y')
+			{
+				std::cout << "You pay Insurance bet : " << Player.GetBet() / 2 << " Chips" << std::endl;
+			}
+			Player.DisplayPlayer(playerHand);
+			Dealer.DisplayDealerPost(dealerHand);
+			std::cout << "Dealer has BlackJack"<<std::endl;
+			if (response == 'y')
+			{
+				std::cout << "You get insurance payout for : " << Player.GetBet() << " Chips" << std::endl;
+				Player.GetWinnings(Player.GetBet());
+			}
+			Dealer.SetBlackJack(true);
+			if (Player.CalculateValue(playerHand) == 21)
+			{
+				std::cout << "Player Push.   You get " << Player.GetBet() << " Chips" << std::endl;
+			}
+			system("pause");
+		}
+		else
+		{
+			system("cls");
+			if (response == 'y')
+			{
+				std::cout << "You pay Insurance bet : " << Player.GetBet() / 2 << " Chips" << std::endl;
+			}
+			Player.DisplayPlayer(playerHand);
+			Dealer.DisplayDealerPre(dealerHand);
+			std::cout << "Dealer does not have BlackJack" << std::endl;
+
+		}
+}
+
 bool FBlackJackGame::GetIsPlay()
 {
 	return isPlay;
@@ -179,9 +236,8 @@ void FBlackJackGame::ResetHands(Card playerHand[], Card dealerHand[], Card playS
 	{
 		dealerHand[i] = Dealer.blank;
 		Dealer.SetCardInHand((0 - Dealer.GetCardInHand()));
-		Dealer.ResetStay();
-
 	}
+	Dealer.ResetStay();
 }
 
 void FBlackJackGame::Deal(Card Deck[], Card playerHand[], Card dealerHand[])
@@ -210,45 +266,64 @@ void FBlackJackGame::PlayGame()
 		system("cls");
 
 		Deal(deck, playerHand, dealerHand);
-		if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
+		if (Dealer.CheckInsurance(dealerHand))
 		{
-			if (playerHand[0].value == 1) { playerHand[0].value = 11; }
-			playSplitHand[0] = playerHand[1];
-			AddCurrentCard();
-			playSplitHand[1] = deck[GetCurrentCard()];
-			AddCurrentCard();
-			playerHand[1] = deck[GetCurrentCard()];
-			system("cls");
-			Player.DisplaySplit(playerHand, playSplitHand);
-			Dealer.DisplayDealerPre(dealerHand);
-			while (!Player.GetStay())
+			Insurance();
+		}
+		if (!Dealer.IsBlackJack())
+		{
+
+			if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
 			{
-				Player.SplitPlay(playerHand, playSplitHand, deck, GetCurrentCard());
-				system("cls");
+				if (playerHand[0].value == 1) { playerHand[0].value = 11; }
+				playSplitHand[0] = playerHand[1];
 				AddCurrentCard();
+				playSplitHand[1] = deck[GetCurrentCard()];
+				AddCurrentCard();
+				playerHand[1] = deck[GetCurrentCard()];
+				system("cls");
 				Player.DisplaySplit(playerHand, playSplitHand);
 				Dealer.DisplayDealerPre(dealerHand);
+				while (!Player.GetStay())
+				{
+					Player.SplitPlay(playerHand, playSplitHand, deck, GetCurrentCard());
+					system("cls");
+					AddCurrentCard();
+					Player.DisplaySplit(playerHand, playSplitHand);
+					Dealer.DisplayDealerPre(dealerHand);
+				}
 			}
-		}
-		else
-		{
-			while (!Player.GetStay())
+			else
 			{
-				Player.Play(playerHand, deck, GetCurrentCard());
-				system("cls");
-				AddCurrentCard();
-				Player.DisplayPlayer(playerHand);
-				Dealer.DisplayDealerPre(dealerHand);
+				while (!Player.GetStay())
+				{
+					Player.Play(playerHand, deck, GetCurrentCard());
+					system("cls");
+					AddCurrentCard();
+					Player.DisplayPlayer(playerHand);
+					Dealer.DisplayDealerPre(dealerHand);
+				}
 			}
+			Results();
 		}
-		Results();
 		system("pause");
 	}
 }
 
 void FBlackJackGame::Results()
 {
-	if (!Player.IsPlayerBust() || !Player.IsSplitBust())
+	if (Player.IsPlayBJ() && !Dealer.IsBlackJack())
+	{
+		if (CheckPush(playerHand))
+		{
+			std::cout << "Player Push.   You get " << Player.GetBet() << " Chips" << std::endl;
+		}
+		else
+		{
+			std::cout << "Player BlackJack.   You get " << Player.GetBet()*2.5 << " Chips" << std::endl;
+		}
+	}
+	else if (!Player.IsPlayerBust() || !Player.IsSplitBust())
 	{
 		DealerPlay();
 		int winnings = 0;
@@ -257,12 +332,12 @@ void FBlackJackGame::Results()
 		FString playerResult;
 		FString splitResult;
 		//player results
-		if (CheckPush(playerHand,dealerHand))
+		if (CheckPush(playerHand))
 		{
 			playerResult = "Player Push.   ";
 			winningMulti = 1;
 		}
-		else if (CheckWin(playerHand, dealerHand))
+		else if (CheckWin(playerHand)&&!Player.IsPlayerBust())
 		{
 			playerResult = "Player Wins.   ";
 			winningMulti = 2;
@@ -278,12 +353,12 @@ void FBlackJackGame::Results()
 		if (playSplitHand[0].value > 0)
 		{
 			//split results
-			if (CheckPush(playSplitHand, dealerHand))
+			if (CheckPush(playSplitHand))
 			{
 				splitResult = "Split Hand Push.   ";
 				splitWinMulti = 1;
 			}
-			else if (CheckWin(playSplitHand, dealerHand))
+			else if (CheckWin(playSplitHand)&& !Player.IsSplitBust())
 			{
 				splitResult = "Split Hand Wins.   ";
 				splitWinMulti = 2;
@@ -334,7 +409,7 @@ void FBlackJackGame::DealerPlay()
 	}
 }
 
-bool FBlackJackGame::CheckPush(Card hand[], Card dealerhand[])
+bool FBlackJackGame::CheckPush(Card hand[])
 {
 	int handValue = Player.CalculateValue(hand);
 	int dealerValue = Dealer.CalculateValue(dealerHand);
@@ -348,7 +423,7 @@ bool FBlackJackGame::CheckPush(Card hand[], Card dealerhand[])
 	}
 }
 
-bool FBlackJackGame::CheckWin(Card hand[], Card dealerhand[])
+bool FBlackJackGame::CheckWin(Card hand[])
 {
 	int handValue = Player.CalculateValue(hand);
 	int dealerValue = Dealer.CalculateValue(dealerHand);

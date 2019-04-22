@@ -25,9 +25,8 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 		if (handTotal == 21)
 		{
 			stay = true;
-			std::cout << "BlackJack!! You get " << (GetBet()*2.5) << " Chips" << std::endl;
-			GetWinnings(GetBet()*2.5);
-			bet = 0;
+			std::cout << "Player Gets BlackJack!!"<< std::endl;
+			playBlackJack = true;
 		}
 		else
 		{
@@ -93,9 +92,6 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 			if (handTotal == 21)
 			{
 				splitStay = true;
-				std::cout << "BlackJack!! You get " << (GetBet()*2.5) << " Chips" << std::endl;
-				GetWinnings(GetBet()*2.5);
-				system("pause");
 			}
 			else
 			{
@@ -159,9 +155,6 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 			if (handTotal == 21)
 			{
 				stay = true;
-				std::cout << "BlackJack!! You get " << (GetBet()*2.5) << " Chips" << std::endl;
-				GetWinnings(GetBet()*2.5);
-				bet = 0;
 			}
 			else
 			{
@@ -364,6 +357,7 @@ void FPlayer::ResetPlayer(Card hand[], Card splitHand[])
 	splitValue = 0;
 	splitBet = 0;
 	cardInHand = 0;
+	playBlackJack = false;
 	for (int i = 0; i < 5; i++)
 	{
 		hand[i] = blank;
@@ -538,6 +532,11 @@ int FPlayer::GetSplitValue()
 int FPlayer::GetSplitBet()
 {
 	return splitBet;
+}
+
+bool FPlayer::IsPlayBJ()
+{
+	return playBlackJack;
 }
 
 

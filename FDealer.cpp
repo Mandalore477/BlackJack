@@ -70,7 +70,7 @@ void FDealer::SetCardInHand(int value)
 
 bool FDealer::CheckInsurance(Card hand[])
 {
-	if (hand[1].value == 10 || hand[1].value == 11)
+	if (hand[0].value == 11)
 	{
 		return true;
 	}
@@ -92,7 +92,19 @@ bool FDealer::GetStay()
 
 void FDealer::ResetStay()
 {
+	blackJack = false;
 	stay = false;
+	bust = false;
+}
+
+bool FDealer::IsBlackJack()
+{
+	return blackJack;
+}
+
+void FDealer::SetBlackJack(bool blackJackResult)
+{
+	blackJack = blackJackResult;
 }
 
 void FDealer::DisplayDealerPre(Card hand[])

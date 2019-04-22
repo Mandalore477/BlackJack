@@ -23,6 +23,7 @@ private:
 	int splitCardInHand;
 	int splitValue;
 	int splitBet;
+	bool playBlackJack;
 	
 public:
 	FPlayer();
@@ -52,6 +53,7 @@ public:
 	void SplitDoubleDownOpt(Card splitHand[],Card deck[],int currentCard,int splitCardInHand);
 	int GetSplitValue();
 	int GetSplitBet();
+	bool IsPlayBJ();
 
 
 	Card blank;
