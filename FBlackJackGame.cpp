@@ -27,15 +27,15 @@ void FBlackJackGame::MakeDeck(Card deck[])
 		}
 		if (size % 52 < 13)
 		{
-			deck[size].suit = "Spades";
+			deck[size].suit = "Spades  ";
 		}
 		else if (size % 52 < 26)
 		{
-			deck[size].suit = "Hearts";
+			deck[size].suit = "Hearts  ";
 		}
 		else if (size % 52 < 39)
 		{
-			deck[size].suit = "Clubs";
+			deck[size].suit = "Clubs   ";
 		}
 		else
 		{
@@ -44,40 +44,40 @@ void FBlackJackGame::MakeDeck(Card deck[])
 		
 		if (deck[size].value == 1)
 		{
-			deck[size].face = "A";
+			deck[size].face = " A";
 			deck[size].value = 11;
 		}
 		else if (deck[size].value == 2)
 		{
-			deck[size].face = "2";
+			deck[size].face = " 2";
 		}
 		else if (deck[size].value == 3)
 		{
-			deck[size].face = "3";
+			deck[size].face = " 3";
 		}
 		else if (deck[size].value == 4)
 		{
-			deck[size].face = "4";
+			deck[size].face = " 4";
 		}
 		else if (deck[size].value == 5)
 		{
-			deck[size].face = "5";
+			deck[size].face = " 5";
 		}
 		else if (deck[size].value == 6)
 		{
-			deck[size].face = "6";
+			deck[size].face = " 6";
 		}
 		else if (deck[size].value == 7)
 		{
-			deck[size].face = "7";
+			deck[size].face = " 7";
 		}
 		else if (deck[size].value == 8)
 		{
-			deck[size].face = "8";
+			deck[size].face = " 8";
 		}
 		else if (deck[size].value == 9)
 		{
-			deck[size].face = "9";
+			deck[size].face = " 9";
 		}
 		else if (deck[size].value == 10)
 		{
@@ -85,17 +85,17 @@ void FBlackJackGame::MakeDeck(Card deck[])
 		}
 		else if (deck[size].value == 11)
 		{
-			deck[size].face = "J";
+			deck[size].face = " J";
 			deck[size].value = 10;
 		}
 		else if (deck[size].value == 12)
 		{
-			deck[size].face = "Q";
+			deck[size].face = " Q";
 			deck[size].value = 10;
 		}
 		else if (deck[size].value == 13)
 		{
-			deck[size].face = "K";
+			deck[size].face = " K";
 			deck[size].value = 10;
 		}
 	//std::cout << deck[size].face << " " << deck[size].suit << deck[size].value << "\n";

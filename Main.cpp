@@ -14,7 +14,6 @@ FDealer Dealer;
 
 void Deal(Card Deck[], Card playerHand[], Card dealerHand[]);
 void ResetHands(Card playerHand[], Card dealerHand[]);
-void SplitPlayer(Card hand[], Card deck[], Card dealerHand[]);
 
 int main()
 {
@@ -35,10 +34,9 @@ int main()
 		
 		Deal(deck, playerHand, dealerHand);
 		Player.SetCardInHand(2);
-		Player.Split(playerHand, Player.GetChips(), Player.GetBet());
-		if (Player.IsSplit())
+		if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
 		{
-			SplitPlayer(playerHand, deck, dealerHand);
+			//split functionality
 		}
 		while (!Player.GetStay())
 		{
@@ -68,7 +66,6 @@ void ResetHands(Card playerHand[], Card dealerHand[])
 	{
 		playerHand[i] = Player.blank;
 		dealerHand[i] = Dealer.blank;
-		Player.ResetSplit();
 		Player.SetCardInHand((0 - Player.GetCardInHand()));
 		Dealer.SetCardInHand((0 - Dealer.GetCardInHand()));
 		Dealer.ResetStay();
@@ -92,25 +89,6 @@ void Deal(Card Deck[], Card playerHand[], Card dealerHand[])
 	Dealer.DisplayDealerPre(dealerHand);
 }
 
-void SplitPlayer(Card hand[],Card deck[],Card dealerHand[])
-{
-	FPlayer SplitPlay;
-	for (int32 i = 0; i < 5; i++)
-	{
-		SplitPlay.hand[i] = SplitPlay.blank;
-	}
-	SplitPlay.hand[0] = hand[1];
-	hand[1] = SplitPlay.blank;
-	SplitPlay.hand[1] = deck[BJGame.GetCurrentCard()];
-	BJGame.SetCurrentCard();
-	Player.ReBet();
-	SplitPlay.DisplayPlayer(SplitPlay.hand);
-	Dealer.DisplayDealerPre(dealerHand);
-	SplitPlay.Play(SplitPlay.hand, deck, BJGame.GetCurrentCard());
-	Player.AddSplitResult(SplitPlay.CalculateValue(SplitPlay.hand));
-
-
-}
 //
 //void Result()
 //{

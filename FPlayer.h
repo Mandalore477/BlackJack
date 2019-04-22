@@ -17,37 +17,36 @@ private:
 	FString playerName;
 	int chips;
 	int bet;
-	int splitResults[96][2];
-	int splitNum;
-	int splitWins = 0;
-	int splitPush = 0;
-	int splitLosses = 0;
 	bool isSplit;
+	bool splitStay;
+	bool splitBust;
+	int splitCardInHand;
+	int splitValue;
 	
 public:
 	FPlayer();
 	~FPlayer();
 	void Play(Card hand[], Card deck[],int currentCard);
+	void SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentCard);
 	int CalculateValue(Card hand[]);
-	int GetCardInHand();
+	int GetCardInHand(Card hand[]);
 	void SetCardInHand(int value);
 	void MakeBet();
 	int GetBet();
 	void GetWinnings(int winnings);
 	void DisplayPlayer(Card hand[]);
-	void Split(Card hand[],int chips, int bet);
+	void DisplaySplit(Card hand[], Card splitHand[]);
+	bool IsSplit(Card hand[],int chips, int bet);
 	int GetChips();
 	void ReBet();
-	void CheckSplitResults(int dealerValue,bool dealerBust);
-	void AddSplitResult(int value);
-	int GetSplitNum();
-	void AddSplitNum();
-	void ResetSplit();
+
 	bool GetStay();
 	void Hit(Card hand[], Card deck[], int currentCard);
 	bool IsPlayerBust();
+	bool GetSplitHandBust();
 	void DoubleDownOpt(Card hand[],Card deck[],int currentCard);
-	bool IsSplit();
+	int GetSplitValue();
+
 
 	Card blank;
 	Card hand[5];
