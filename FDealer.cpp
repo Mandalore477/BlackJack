@@ -125,7 +125,7 @@ void FDealer::DisplayDealerPre(Card hand[])
 			std::cout << "//*" << hand[i].face << " " << hand[i].suit << "*\\\\" << std::endl;
 		}
 	}
-	std::cout << "Dealer hand value :" << hand[0].value<< std::endl;
+	std::cout << "Dealer hand value :" << hand[0].value<< std::endl << std::endl;
 
 }
 
@@ -143,5 +143,5 @@ void FDealer::DisplayDealerPost(Card hand[])
 			std::cout << "//*" << hand[i].face << " " << hand[i].suit << "*\\\\" << std::endl;
 		}
 	}
-	std::cout << "Dealer hand value :" << CalculateValue(hand) << std::endl;
+	std::cout << "Dealer hand value :" << CalculateValue(hand)<<"\n" << std::endl;
 }

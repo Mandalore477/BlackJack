@@ -31,7 +31,7 @@ private:
 public:
 	FBlackJackGame();// constructor
 	void MakeDeck(Card deck[]);
-	void ShuffleDeck(Card deck[]);
+	void ShuffleDeck();
 	int32 GetDeckSize() const;
 	int32 GetCurrentCard();
 	void SetCurrentCard();

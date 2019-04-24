@@ -105,7 +105,7 @@ void FBlackJackGame::MakeDeck(Card deck[])
 	//return deck;
 }
 
-void FBlackJackGame::ShuffleDeck(Card deck[])
+void FBlackJackGame::ShuffleDeck()
 {
 	Card holdCard;
 		srand(time(NULL));
@@ -225,7 +225,7 @@ void FBlackJackGame::SetGame()
 	//BJGame.NumberOfPlayers();
 	ResetCurCard();
 	MakeDeck(deck);
-	ShuffleDeck(deck);
+	ShuffleDeck();
 
 }
 

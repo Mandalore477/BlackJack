@@ -241,11 +241,10 @@ int FPlayer::GetCardInHand(Card hand[])
 
 void FPlayer::MakeBet()
 {
-	std::cout << "Bet amount:";
-	std::cin >> bet;
-	if (bet > chips)
+	while (bet > chips || bet < 1)
 	{
-		bet = chips;
+		std::cout << "Bet amount:";
+		std::cin >> bet;
 	}
 	chips -= bet;
 
@@ -283,7 +282,7 @@ void FPlayer::DisplayPlayer(Card hand[])
 			std::cout << "//*" << hand[i].face << " " << hand[i].suit << "*\\\\" << std::endl;
 		}
 	}
-	std::cout << "Player hand value :" << CalculateValue(hand) << std::endl;
+	std::cout << "Player hand value :" << CalculateValue(hand) << "\n" << std::endl;
 	
 }
 
@@ -303,7 +302,7 @@ void FPlayer::DisplaySplit(Card hand[], Card splitHand[])
 			std::cout << "//*" << hand[i].face << " " << hand[i].suit << "*\\\\           " << "//*" << splitHand[i].face << " " << splitHand[i].suit << "*\\\\"<< std::endl;
 		}
 	}
-	std::cout << "Player hand value :" << CalculateValue(hand) << "          Split Hand value :"<< CalculateValue(splitHand)<< std::endl;
+	std::cout << "Player hand value :" << CalculateValue(hand) << "          Split Hand value :" << CalculateValue(splitHand) << "\n" << std::endl;
 }
 
 bool FPlayer::IsSplit(Card hand[],int chips, int bet)
