@@ -26,6 +26,7 @@ private:
 	Card playerHand[5];
 	Card dealerHand[5];
 	Card playSplitHand[5];
+	bool quit;
 
 
 public:
@@ -49,6 +50,9 @@ public:
 	void DealerPlay();
 	bool CheckPush(Card hand[]);
 	bool CheckWin(Card hand[]);
+	bool GetQuit();
+	void PrintIntro();
+	void Smiley();
 	
 	
 	int32 numberOfPlayers;

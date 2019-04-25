@@ -13,10 +13,12 @@ FBlackJackGame BJGame;
 
 int main()
 {
-
+	BJGame.PrintIntro();
 	BJGame.SetGame();
 	BJGame.PlayGame();
 	
+	system("pause");
+
 	return 0;
 }
 

@@ -1,6 +1,7 @@
 #include"FBlackJackGame.h"
 #include "FPlayer.h"
 #include<string>
+#include<iostream>
 
 
 
@@ -87,7 +88,7 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 	{
 		splitCardInHand=GetCardInHand(splitHand);
 		handTotal = CalculateValue(splitHand);
-		if (cardInHand == 2)
+		if (splitCardInHand == 2)
 		{
 			if (handTotal == 21)
 			{
@@ -243,11 +244,14 @@ void FPlayer::MakeBet()
 {
 	while (bet > chips || bet < 1)
 	{
-		std::cout << "Bet amount:";
-		std::cin >> bet;
+		while (std::cout << "Bet ammount :" && !(std::cin >> bet))
+		{
+			std::cin.clear(); //clear bad input flag
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+			std::cout << "Invalid input; please re-enter.\n";
+		}
 	}
 	chips -= bet;
-
 }
 
 int FPlayer::GetBet()
@@ -293,7 +297,15 @@ void FPlayer::DisplaySplit(Card hand[], Card splitHand[])
 	std::cout << "Chips :" << chips << "        Bet :" << bet << "        Split Bet:"<<splitBet << std::endl;
 	for (int i = 0; i < 5; i++)
 	{
-		if (hand[i].value == 0)
+		if (hand[i].value == 0 && splitHand[i].value>0)
+		{
+			std::cout << "                         " << "//*" << splitHand[i].face << " " << splitHand[i].suit << "*\\\\" << std::endl;
+		}
+		else if (hand[i].value > 0 && splitHand[i].value == 0)
+		{
+			std::cout << "//*" << hand[i].face << " " << hand[i].suit << "*\\\\" << std::endl;
+		}
+		else if (hand[i].value == 0 && splitHand[i].value == 0)
 		{
 			std::cout << std::endl;
 		}
@@ -384,7 +396,7 @@ void FPlayer::SplitHit(Card splitHand[], Card deck[], int currentCard, int cardI
 {
 	splitHand[cardInHand] = deck[currentCard];
 	cardInHand++;
-	if (CalculateValue(hand) > 21)
+	if (CalculateValue(splitHand) > 21)
 	{
 		splitStay = true;
 		splitBust = true;

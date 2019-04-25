@@ -101,8 +101,7 @@ void FBlackJackGame::MakeDeck(Card deck[])
 		}
 	//std::cout << deck[size].face << " " << deck[size].suit << deck[size].value << "\n";
 	}
-	system("pause");
-	//return deck;
+	//system("pause");
 }
 
 void FBlackJackGame::ShuffleDeck()
@@ -133,7 +132,7 @@ int32 FBlackJackGame::GetCurrentCard()
 
 void FBlackJackGame::SetCurrentCard()
 {
-	currentCard=currentCard+1;
+	currentCard++;
 }
 
 void FBlackJackGame::AddCurrentCard()
@@ -258,56 +257,90 @@ void FBlackJackGame::Deal(Card Deck[], Card playerHand[], Card dealerHand[])
 
 void FBlackJackGame::PlayGame()
 {
-	while (GetCurrentCard() < 150 && !GetIsPlay())
+	quit = false;
+	while (quit == false)
 	{
-		ResetHands(playerHand, dealerHand, playSplitHand);
-		Player.DisplayPlayerPre();
-		Player.MakeBet();
-		system("cls");
-
-		Deal(deck, playerHand, dealerHand);
-		if (Dealer.CheckInsurance(dealerHand))
+		srand(time(NULL));
+		int seperatorCard = ((rand() % 100) + 150);
+		while (GetCurrentCard() < seperatorCard && !GetIsPlay() && quit == false)
 		{
-			Insurance();
-		}
-		if (!Dealer.IsBlackJack())
-		{
+			ResetHands(playerHand, dealerHand, playSplitHand);
+			Player.DisplayPlayerPre();
+			Player.MakeBet();
+			system("cls");
 
-			if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
+			Deal(deck, playerHand, dealerHand);
+			if (Dealer.CheckInsurance(dealerHand))
 			{
-				if (playerHand[0].value == 1) { playerHand[0].value = 11; }
-				playSplitHand[0] = playerHand[1];
-				AddCurrentCard();
-				playSplitHand[1] = deck[GetCurrentCard()];
-				AddCurrentCard();
-				playerHand[1] = deck[GetCurrentCard()];
-				system("cls");
-				Player.DisplaySplit(playerHand, playSplitHand);
-				Dealer.DisplayDealerPre(dealerHand);
-				while (!Player.GetStay())
+				Insurance();
+			}
+			if (!Dealer.IsBlackJack())
+			{
+
+				if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
 				{
-					Player.SplitPlay(playerHand, playSplitHand, deck, GetCurrentCard());
-					system("cls");
+					if (playerHand[0].value == 1) { playerHand[0].value = 11; }
+					playSplitHand[0] = playerHand[1];
 					AddCurrentCard();
+					playSplitHand[1] = deck[GetCurrentCard()];
+					AddCurrentCard();
+					playerHand[1] = deck[GetCurrentCard()];
+					system("cls");
 					Player.DisplaySplit(playerHand, playSplitHand);
 					Dealer.DisplayDealerPre(dealerHand);
+					while (!Player.GetStay())
+					{
+						Player.SplitPlay(playerHand, playSplitHand, deck, GetCurrentCard());
+						system("cls");
+						AddCurrentCard();
+						Player.DisplaySplit(playerHand, playSplitHand);
+						Dealer.DisplayDealerPre(dealerHand);
+					}
 				}
+				else
+				{
+					while (!Player.GetStay())
+					{
+						Player.Play(playerHand, deck, GetCurrentCard());
+						system("cls");
+						AddCurrentCard();
+						Player.DisplayPlayer(playerHand);
+						Dealer.DisplayDealerPre(dealerHand);
+					}
+				}
+				Results();
+			}
+			char response = ' ';
+			if (Player.GetChips() <= 0)
+			{
+				quit = true;
 			}
 			else
 			{
-				while (!Player.GetStay())
+				while (response != 'y' && response != 'n')
 				{
-					Player.Play(playerHand, deck, GetCurrentCard());
-					system("cls");
-					AddCurrentCard();
-					Player.DisplayPlayer(playerHand);
-					Dealer.DisplayDealerPre(dealerHand);
+					std::cout << "Would you like to continue playing (Y/N)" << std::endl;
+					std::cin >> response;
+					response = tolower(response);
+					if (response == 'n')
+					{
+						quit = true;
+					}
+					else { quit = false; }
 				}
 			}
-			Results();
 		}
-		system("pause");
-	}
+		if (quit== true)
+		{
+			system("cls");
+			Smiley();
+			std::cout << "Thanks for playing" << std::endl;
+		}else{
+			std::cout << "Seperator card reached. Reshuffling the deck!";
+			currentCard = 0;
+			ShuffleDeck();
+		}
+	} 
 }
 
 void FBlackJackGame::Results()
@@ -321,6 +354,7 @@ void FBlackJackGame::Results()
 		else
 		{
 			std::cout << "Player BlackJack.   You get " << Player.GetBet()*2.5 << " Chips" << std::endl;
+			Player.GetWinnings(Player.GetBet()*2 + Player.GetBet()/2);
 		}
 	}
 	else if (!Player.IsPlayerBust() || !Player.IsSplitBust())
@@ -358,7 +392,7 @@ void FBlackJackGame::Results()
 				splitResult = "Split Hand Push.   ";
 				splitWinMulti = 1;
 			}
-			else if (CheckWin(playSplitHand)&& !Player.IsSplitBust())
+			else if (CheckWin(playSplitHand) && !Player.IsSplitBust())
 			{
 				splitResult = "Split Hand Wins.   ";
 				splitWinMulti = 2;
@@ -366,6 +400,7 @@ void FBlackJackGame::Results()
 			else if (Player.IsSplitBust())
 			{
 				splitResult = "Split Hand Bust.   ";
+				splitWinMulti = 0;
 			}
 			else
 			{
@@ -435,6 +470,69 @@ bool FBlackJackGame::CheckWin(Card hand[])
 	{
 		return false;
 	}
+}
+
+bool FBlackJackGame::GetQuit()
+{
+	return quit;
+}
+
+void FBlackJackGame::PrintIntro()
+{
+	std::cout << "		 _     _            _    _            _" << std::endl;
+	std::cout << "		| |   | |          | |  (_)          | |" << std::endl;
+	std::cout << "		| |__ | | __ _  ___| | ___  __ _  ___| | __" << std::endl;
+	std::cout << "		| '_ \\| |/ _` |/ __| |/ / |/ _` |/ __| |/ /" << std::endl;
+	std::cout << "		| |_) | | (_| | (__|   <| | (_| | (__|   <" << std::endl;
+	std::cout << "		|_.__/|_|\\__,_|\\___|_|\\_\\ |\\__,_|\\___|_|\\_\\" << std::endl;
+	std::cout << "		                       _/ | " << std::endl;
+	std::cout << "				     |__ /" << std::endl << std::endl;
+	std::cout << "		Welcome to Blackjack" << std::endl << std::endl;
+	std::cout << "	The object of the game to is beat the dealer without going over 21." << std::endl;
+	std::cout << "	You and the dealer will start with 2 cards however the dealer will only show his top card." << std::endl;
+	std::cout << "	The dealer will always stay on 17 or more." << std::endl;
+	std::cout << "	For each hand you will have the following options A:Hit S:Stay D:DoubleDown F:Surrender." << std::endl;
+	std::cout << "	Hit allows you to draw a new card while stay means that you will keep the cards that you currently have." << std::endl;
+	std::cout << "	Hands can have no more then a maximum of 5 cards." << std::endl;
+	std::cout << "	DoubleDown and Surrender can only be use as the first action of a new hand." << std::endl;
+	std::cout << "	DoubleDown allows you to double your bet and draw a single card and stay." << std::endl;
+	std::cout << "	Surrender allows you to forfeit your hand and you get 1/2 of your bet back." << std::endl;
+	std::cout << "	If the top card of the dealer is visible, you may bet insurance. Insurance is a bet that the dealer" << std::endl;
+	std::cout << "	has 21. If the dealer has 21 you will receive a payout of 1:1 of your insurance bet." << std::endl;
+	std::cout << "	If you receive 2 cards of equal value you may split your hand once and play a second hand with the" << std::endl;
+	std::cout << "	second card. Both hands will receive a second card and can be played normally starting with the split hand." << std::endl;
+	std::cout << "	Blackjack is when you get 21 fromyour original 2 cards and you recieve a payout of 3:2." << std::endl;
+	std::cout << "	Split hands cannot get blackjack. " << std::endl;
+	std::cout << "	If you and the dealer have hands of equal value it is a push and you keep your bet." << std::endl;
+
+
+	system("pause");
+	system("cls");
+
+}
+
+void FBlackJackGame::Smiley()
+{
+	std::cout << "                  __ooooooooo__" << std::endl;
+	std::cout << "             oOOOOOOOOOOOOOOOOOOOOOo" << std::endl;
+	std::cout << "         oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo" << std::endl;
+	std::cout << "      oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo" << std::endl;
+	std::cout << "    oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo" << std::endl;
+	std::cout << "   oOOOOOOOOOOO*  *OOOOOOOOOOOOOO*  *OOOOOOOOOOOo" << std::endl;
+	std::cout << "  oOOOOOOOOOOO      OOOOOOOOOOOO      OOOOOOOOOOOo" << std::endl;
+	std::cout << "  oOOOOOOOOOOOOo  oOOOOOOOOOOOOOOo  oOOOOOOOOOOOOOo" << std::endl;
+	std::cout << " oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo" << std::endl;
+	std::cout << " oOOOO     OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO     OOOOo" << std::endl;
+	std::cout << " oOOOOOO OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO OOOOOOo" << std::endl;
+	std::cout << "  *OOOOO  OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO  OOOOOO*" << std::endl;
+	std::cout << "  *OOOOOO  *OOOOOOOOOOOOOOOOOOOOOOOOOOOOO*  OOOOOO*" << std::endl;
+	std::cout << "   *OOOOOO  *OOOOOOOOOOOOOOOOOOOOOOOOOOO*  OOOOOO*" << std::endl;
+	std::cout << "    *OOOOOOo  *OOOOOOOOOOOOOOOOOOOOOOO*  oOOOOOO*" << std::endl;
+	std::cout << "      *OOOOOOOo  *OOOOOOOOOOOOOOOOO*  oOOOOOOO*" << std::endl;
+	std::cout << "        *OOOOOOOOo  *OOOOOOOOOOO*  oOOOOOOOO*" << std::endl;
+	std::cout << "           *OOOOOOOOo           oOOOOOOOO*" << std::endl;
+	std::cout << "              *OOOOOOOOOOOOOOOOOOOOO*" << std::endl;
+	std::cout << "                    ''ooooooooo''" << std::endl;
 }
 
 
