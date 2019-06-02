@@ -8,6 +8,7 @@
 
 FPlayer Player;
 FDealer Dealer;
+FDeck Deck;
 
 FBlackJackGame::FBlackJackGame()
 {
@@ -15,114 +16,7 @@ FBlackJackGame::FBlackJackGame()
 }
 
 
-void FBlackJackGame::MakeDeck(Card deck[])
-{
-	for (int32 x = 1; x < 313; x++)
-	{
-		int32 size = x - 1;
-		deck[size].value = x % 13;
-		if (deck[size].value == 0)
-		{
-			deck[size].value = 13;
-		}
-		if (size % 52 < 13)
-		{
-			deck[size].suit = "Spades  ";
-		}
-		else if (size % 52 < 26)
-		{
-			deck[size].suit = "Hearts  ";
-		}
-		else if (size % 52 < 39)
-		{
-			deck[size].suit = "Clubs   ";
-		}
-		else
-		{
-			deck[size].suit = "Diamonds";
-		}
-		
-		if (deck[size].value == 1)
-		{
-			deck[size].face = " A";
-			deck[size].value = 11;
-		}
-		else if (deck[size].value == 2)
-		{
-			deck[size].face = " 2";
-		}
-		else if (deck[size].value == 3)
-		{
-			deck[size].face = " 3";
-		}
-		else if (deck[size].value == 4)
-		{
-			deck[size].face = " 4";
-		}
-		else if (deck[size].value == 5)
-		{
-			deck[size].face = " 5";
-		}
-		else if (deck[size].value == 6)
-		{
-			deck[size].face = " 6";
-		}
-		else if (deck[size].value == 7)
-		{
-			deck[size].face = " 7";
-		}
-		else if (deck[size].value == 8)
-		{
-			deck[size].face = " 8";
-		}
-		else if (deck[size].value == 9)
-		{
-			deck[size].face = " 9";
-		}
-		else if (deck[size].value == 10)
-		{
-			deck[size].face = "10";
-		}
-		else if (deck[size].value == 11)
-		{
-			deck[size].face = " J";
-			deck[size].value = 10;
-		}
-		else if (deck[size].value == 12)
-		{
-			deck[size].face = " Q";
-			deck[size].value = 10;
-		}
-		else if (deck[size].value == 13)
-		{
-			deck[size].face = " K";
-			deck[size].value = 10;
-		}
-	//std::cout << deck[size].face << " " << deck[size].suit << deck[size].value << "\n";
-	}
-	//system("pause");
-}
 
-void FBlackJackGame::ShuffleDeck()
-{
-	Card holdCard;
-		srand(time(NULL));
-	for (int i = 0; i < 312; i++)
-	{
-		int randCard = rand() % 312;
-		holdCard = deck[i];
-		deck[i] = deck[randCard];
-		deck[randCard] = holdCard;
-		std::cout << deck[i].face << " " << deck[i].suit << "\n";
-	}
-	system("pause");
-}
-
-int32 FBlackJackGame::GetDeckSize() const
-{
-	const int32 decksize = 312;
-	return deckSize;
-}
 
 int32 FBlackJackGame::GetCurrentCard()
 {
@@ -227,8 +121,8 @@ void FBlackJackGame::SetGame()
 	Player.GetWinnings(Player.GetChips());
 	//BJGame.NumberOfPlayers();
 	ResetCurCard();
-	MakeDeck(deck);
-	ShuffleDeck();
+	Deck.MakeDeck();
+	Deck.ShuffleDeck();
 
 }
 
@@ -243,13 +137,13 @@ void FBlackJackGame::ResetHands(Card playerHand[], Card dealerHand[], Card playS
 	Dealer.ResetStay();
 }
 
-void FBlackJackGame::Deal(Card Deck[], Card playerHand[], Card dealerHand[])
+void FBlackJackGame::Deal(Card playerHand[], Card dealerHand[])
 {
 	for (int32 i = 0; i < 2; i++)
 	{
-		playerHand[i] = Deck[GetCurrentCard()];
+		playerHand[i] = *(Deck.getDeckPtr() + GetCurrentCard());
 		SetCurrentCard();
-		dealerHand[i] = Deck[GetCurrentCard()];
+		dealerHand[i] = *(Deck.getDeckPtr() + GetCurrentCard());
 		SetCurrentCard();
 		//std::cout << "Player card " << playerHand[i].face << " " << playerHand[i].suit << std::endl;
 		//std::cout << "Dealer card " << dealerHand[i].face << " " << dealerHand[i].suit << std::endl;
@@ -273,7 +167,7 @@ void FBlackJackGame::PlayGame()
 			Player.MakeBet();
 			system("cls");
 
-			Deal(deck, playerHand, dealerHand);
+			Deal(playerHand, dealerHand);
 			if (Dealer.CheckInsurance(dealerHand))
 			{
 				Insurance();
@@ -286,15 +180,15 @@ void FBlackJackGame::PlayGame()
 					if (playerHand[0].value == 1) { playerHand[0].value = 11; }
 					playSplitHand[0] = playerHand[1];
 					AddCurrentCard();
-					playSplitHand[1] = deck[GetCurrentCard()];
+					playSplitHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
 					AddCurrentCard();
-					playerHand[1] = deck[GetCurrentCard()];
+					playerHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
 					system("cls");
 					Player.DisplaySplit(playerHand, playSplitHand);
 					Dealer.DisplayDealerPre(dealerHand);
 					while (!Player.GetStay())
 					{
-						Player.SplitPlay(playerHand, playSplitHand, deck, GetCurrentCard());
+						Player.SplitPlay(playerHand, playSplitHand, Deck.getDeckPtr(), GetCurrentCard());
 						system("cls");
 						AddCurrentCard();
 						Player.DisplaySplit(playerHand, playSplitHand);
@@ -305,7 +199,7 @@ void FBlackJackGame::PlayGame()
 				{
 					while (!Player.GetStay())
 					{
-						Player.Play(playerHand, deck, GetCurrentCard());
+						Player.Play(playerHand, Deck.getDeckPtr(), GetCurrentCard());
 						system("cls");
 						AddCurrentCard();
 						Player.DisplayPlayer(playerHand);
@@ -352,7 +246,7 @@ void FBlackJackGame::PlayGame()
 		}else{
 			std::cout << "Seperator card reached. Reshuffling the deck!";
 			currentCard = 0;
-			ShuffleDeck();
+			Deck.ShuffleDeck();
 		}
 	} 
 }

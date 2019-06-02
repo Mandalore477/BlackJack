@@ -11,7 +11,7 @@ FDeck::~FDeck()
 {
 }
 
-void FDeck::MakeDeck(Card deck[])
+void FDeck::MakeDeck()
 {
 	for (int32 x = 1; x < 313; x++)
 	{
@@ -99,7 +99,7 @@ void FDeck::MakeDeck(Card deck[])
 	//system("pause");
 }
 
-void FDeck::ShuffleDeck(Card deck[])
+void FDeck::ShuffleDeck()
 {
 	Card holdCard;
 	srand(time(NULL));
@@ -114,7 +114,7 @@ void FDeck::ShuffleDeck(Card deck[])
 	//system("pause");
 }
 
-Card * FDeck::getDeckPtr()
+Card *FDeck::getDeckPtr()
 {
 	return deckPtr;
 }

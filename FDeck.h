@@ -15,8 +15,8 @@ class FDeck
 public:
 	FDeck();
 	~FDeck();
-	void MakeDeck(Card deck[]);
-	void ShuffleDeck(Card deck[]);
+	void MakeDeck();
+	void ShuffleDeck();
 	Card* getDeckPtr();
 	int getDeckSize();
 };

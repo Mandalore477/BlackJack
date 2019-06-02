@@ -16,7 +16,7 @@ FPlayer::~FPlayer()
 {
 }
 
-void FPlayer::Play(Card hand[], Card deck[], int currentCard)
+void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 {
 	cardInHand = GetCardInHand(hand);
 	bust = false;
@@ -31,7 +31,7 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 		}
 		else
 		{
-			DoubleDownOpt(hand, deck, currentCard, cardInHand);
+			DoubleDownOpt(hand, deckPtr, currentCard, cardInHand);
 		}
 
 	}
@@ -74,7 +74,7 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 			} while (response != 'a' && response != 's');
 			if (response == 'a')
 			{
-				Hit(hand, deck, currentCard,cardInHand);
+				Hit(hand, deckPtr, currentCard,cardInHand);
 			}
 			else
 			{
@@ -86,7 +86,7 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 
 }
 
-void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentCard)
+void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int currentCard)
 {
 	splitBust = false;
 	// play split hand
@@ -102,7 +102,7 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 			}
 			else
 			{
-				SplitDoubleDownOpt(splitHand, deck, currentCard,splitCardInHand);
+				SplitDoubleDownOpt(splitHand, deckPtr, currentCard,splitCardInHand);
 			}
 
 		}
@@ -144,7 +144,7 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 				} while (response != 'a' && response != 's');
 				if (response == 'a')
 				{
-					SplitHit(splitHand, deck, currentCard,splitCardInHand);
+					SplitHit(splitHand, deckPtr, currentCard,splitCardInHand);
 				}
 				else
 				{
@@ -170,7 +170,7 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 			}
 			else
 			{
-				DoubleDownOpt(hand, deck, currentCard,cardInHand);
+				DoubleDownOpt(hand, deckPtr, currentCard,cardInHand);
 			}
 
 		}
@@ -212,7 +212,7 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 				} while (response != 'a' && response != 's');
 				if (response == 'a')
 				{
-					Hit(hand, deck, currentCard, cardInHand);
+					Hit(hand, deckPtr, currentCard, cardInHand);
 				}
 				else
 				{
@@ -405,9 +405,9 @@ bool FPlayer::GetStay()
 	return stay;
 }
 
-void FPlayer::Hit(Card hand[], Card deck[], int currentCard, int cardInHand)
+void FPlayer::Hit(Card hand[], Card *deckPtr, int currentCard, int cardInHand)
 {
-	hand[cardInHand] = deck[currentCard];
+	hand[cardInHand] = *(deckPtr + currentCard);
 	cardInHand++;
 	if (CalculateValue(hand) > 21)
 	{
@@ -416,9 +416,9 @@ void FPlayer::Hit(Card hand[], Card deck[], int currentCard, int cardInHand)
 	}
 }
 
-void FPlayer::SplitHit(Card splitHand[], Card deck[], int currentCard, int cardInHand)
+void FPlayer::SplitHit(Card splitHand[], Card *deckPtr, int currentCard, int cardInHand)
 {
-	splitHand[cardInHand] = deck[currentCard];
+	splitHand[cardInHand] = *(deckPtr + currentCard);
 	cardInHand++;
 	if (CalculateValue(splitHand) > 21)
 	{
@@ -442,7 +442,7 @@ bool FPlayer::GetSplitHandBust()
 	return splitBust;
 }
 
-void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInHand)
+void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardInHand)
 {
 	bust = false;
 	char response=' ';
@@ -463,7 +463,7 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInH
 		} while (response != 'a' && response != 's' && response != 'f');
 		if (response == 'a')
 		{
-			Hit(hand, deck, currentCard, cardInHand);
+			Hit(hand, deckPtr, currentCard, cardInHand);
 		}
 		else if (response == 'f')
 		{
@@ -494,7 +494,7 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInH
 		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
 		if (response == 'd')
 		{
-			Hit(hand, deck, currentCard, cardInHand);
+			Hit(hand, deckPtr, currentCard, cardInHand);
 			std::cout << "You double down" << std::endl;
 			ReBet();
 			bet += bet;
@@ -502,7 +502,7 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInH
 		}
 		else if (response == 'a')
 		{
-			Hit(hand, deck, currentCard, cardInHand);
+			Hit(hand, deckPtr, currentCard, cardInHand);
 		}
 		else if (response == 'f')
 		{
@@ -519,7 +519,7 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInH
 	}
 }
 
-void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card deck[], int currentCard, int splitCardInHand)
+void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCard, int splitCardInHand)
 {
 	splitBust = false;
 	char response;
@@ -540,7 +540,7 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card deck[], int currentCard,
 		} while (response != 'a' && response != 's' && response != 'f');
 		if (response == 'a')
 		{
-			SplitHit(splitHand, deck, currentCard, cardInHand);
+			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
 		}
 
 		else
@@ -564,7 +564,7 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card deck[], int currentCard,
 		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
 		if (response == 'd')
 		{
-			SplitHit(splitHand, deck, currentCard, cardInHand);
+			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
 			std::cout << "You double down" << std::endl;
 			ReBet();
 			splitBet += splitBet;
@@ -572,7 +572,7 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card deck[], int currentCard,
 		}
 		else if (response == 'a')
 		{
-			SplitHit(splitHand, deck, currentCard, cardInHand);
+			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
 		}
 		else
 		{

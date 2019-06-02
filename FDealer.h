@@ -2,6 +2,7 @@
 #define DEALER
 #include<iostream>
 #include"FBlackJackGame.h"
+#include"FDeck.h"
 
 
 
@@ -20,7 +21,7 @@ public:
 	FDealer();
 	~FDealer();
 	
-	void Hit(Card hand[], Card deck[], int currentCard);
+	void Hit(Card hand[], Card *deckPtr, int currentCard);
 	int CalculateValue(Card hand[]);
 	int GetCardInHand();
 	void SetCardInHand(int value);

@@ -1,6 +1,5 @@
 #include "FDealer.h"
 #include"CardStruct.h"
-#include "EMPTYCIN.h"
 
 
 
@@ -13,7 +12,7 @@ FDealer::~FDealer()
 {
 }
 
-void FDealer::Hit(Card hand[], Card deck[], int currentCard)
+void FDealer::Hit(Card hand[], Card *deckPtr, int currentCard)
 {
 	cardInHand = 2;
 
@@ -29,7 +28,7 @@ void FDealer::Hit(Card hand[], Card deck[], int currentCard)
 		}
 		else
 		{
-			hand[cardInHand] = deck[currentCard];
+			hand[cardInHand] = *(deckPtr + currentCard);
 			SetCardInHand(1);
 		}
 		if (handTotal > 21)

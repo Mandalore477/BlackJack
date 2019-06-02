@@ -7,6 +7,7 @@
 #include"CardStruct.h"
 #include"FPlayer.h"
 #include"FDealer.h"
+#include"FDeck.h"
 
 // to make the syntax unreal friendly
 
@@ -18,7 +19,6 @@ using int32 = int;
 class FBlackJackGame
 {
 private:
-//	Card deck[deckSize];
 	int32 deckSize;
 	int32 currentCard;
 	Card blank;
@@ -32,9 +32,7 @@ private:
 
 public:
 	FBlackJackGame();// constructor
-	void MakeDeck(Card deck[]);
-	void ShuffleDeck();
-	int32 GetDeckSize() const;
+
 	int32 GetCurrentCard();
 	void SetCurrentCard();
 	void AddCurrentCard();
@@ -44,7 +42,7 @@ public:
 	bool GetIsPlay();
 	void SetIsPlay(bool play);
 	void SetGame();
-	void Deal(Card Deck[], Card playerHand[], Card dealerHand[]);
+	void Deal(Card playerHand[], Card dealerHand[]);
 	void ResetHands(Card playerHand[], Card dealerHand[], Card playSplitHand[]);
 	void PlayGame();
 	void Results();

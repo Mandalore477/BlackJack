@@ -28,8 +28,8 @@ private:
 public:
 	FPlayer();
 	~FPlayer();
-	void Play(Card hand[], Card deck[],int currentCard);
-	void SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentCard);
+	void Play(Card hand[], Card *deckPtr,int currentCard);
+	void SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int currentCard);
 	int CalculateValue(Card hand[]);
 	int GetCardInHand(Card hand[]);
 	void MakeBet();
@@ -44,13 +44,13 @@ public:
 	void ResetPlayer(Card hand[], Card splitHand[]);
 
 	bool GetStay();
-	void Hit(Card hand[], Card deck[], int currentCard,int cardInHand);
-	void SplitHit(Card splitHand[], Card deck[], int currentCard, int cardInHand);
+	void Hit(Card hand[], Card *deckPtr, int currentCard,int cardInHand);
+	void SplitHit(Card splitHand[], Card *deckPtr, int currentCard, int cardInHand);
 	bool IsPlayerBust();
 	bool IsSplitBust();
 	bool GetSplitHandBust();
-	void DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInHand);
-	void SplitDoubleDownOpt(Card splitHand[],Card deck[],int currentCard,int splitCardInHand);
+	void DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardInHand);
+	void SplitDoubleDownOpt(Card splitHand[],Card *deckPtr,int currentCard,int splitCardInHand);
 	int GetSplitValue();
 	int GetSplitBet();
 	bool IsPlayBJ();
