@@ -1,5 +1,6 @@
 #include "FDealer.h"
 #include"CardStruct.h"
+#include "EMPTYCIN.h"
 
 
 
@@ -15,9 +16,7 @@ FDealer::~FDealer()
 void FDealer::Hit(Card hand[], Card deck[], int currentCard)
 {
 	cardInHand = 2;
-	stay = false;
-	while (!stay)
-	{
+
 		handTotal = CalculateValue(hand);
 		std::cout << "dealer total is :" << handTotal << std::endl;
 		if (handTotal >= 17)
@@ -37,7 +36,6 @@ void FDealer::Hit(Card hand[], Card deck[], int currentCard)
 		{
 			bust = true;
 		}
-	}
 }
 
 int FDealer::CalculateValue(Card hand[])

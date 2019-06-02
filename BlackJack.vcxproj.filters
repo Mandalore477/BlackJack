@@ -27,6 +27,9 @@
     <ClCompile Include="FDealer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FDeck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FBlackJackGame.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CardStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FDeck.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

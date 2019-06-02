@@ -19,7 +19,6 @@ void FBlackJackGame::MakeDeck(Card deck[])
 {
 	for (int32 x = 1; x < 313; x++)
 	{
-		
 		int32 size = x - 1;
 		deck[size].value = x % 13;
 		if (deck[size].value == 0)
@@ -114,9 +113,9 @@ void FBlackJackGame::ShuffleDeck()
 		holdCard = deck[i];
 		deck[i] = deck[randCard];
 		deck[randCard] = holdCard;
-		//std::cout << deck[i].face << " " << deck[i].suit << "\n";
+		std::cout << deck[i].face << " " << deck[i].suit << "\n";
 	}
-
+	system("pause");
 }
 
 int32 FBlackJackGame::GetDeckSize() const
@@ -154,12 +153,18 @@ void FBlackJackGame::ResetCurCard()
 void FBlackJackGame::Insurance()
 {
 	char response=' ';
+
 	if (Player.GetBet() / 2 < Player.GetChips())
 	{
 		while (response != 'y' && response != 'n')
 		{
-			std::cout << "Would you like to purchase Insurance Y/N";
-			std::cin >> response;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			while (std::cout << "Would you like to purchase insurance (Y/N)" && !(std::cin >> response))
+			{
+				std::cin.clear(); //clear bad input flag
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+				std::cout << "Invalid input; please re-enter.\n";
+			}
 			response = tolower(response);
 		}
 		if (response == 'y')
@@ -192,7 +197,6 @@ void FBlackJackGame::Insurance()
 			{
 				std::cout << "Player Push.   You get " << Player.GetBet() << " Chips" << std::endl;
 			}
-			system("pause");
 		}
 		else
 		{
@@ -314,13 +318,19 @@ void FBlackJackGame::PlayGame()
 			if (Player.GetChips() <= 0)
 			{
 				quit = true;
+				system("pause");
 			}
 			else
 			{
 				while (response != 'y' && response != 'n')
 				{
-					std::cout << "Would you like to continue playing (Y/N)" << std::endl;
-					std::cin >> response;
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					while (std::cout << "Would you like to continue playing (Y/N)" && !(std::cin >> response))
+					{
+						std::cin.clear(); //clear bad input flag
+						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+						std::cout << "Invalid input; please re-enter.\n";
+					}
 					response = tolower(response);
 					if (response == 'n')
 					{
@@ -334,6 +344,10 @@ void FBlackJackGame::PlayGame()
 		{
 			system("cls");
 			Smiley();
+			if (Player.GetChips() <= 0)
+			{
+				std::cout << "You ran out of chips" << std::endl;
+			}
 			std::cout << "Thanks for playing" << std::endl;
 		}else{
 			std::cout << "Seperator card reached. Reshuffling the deck!";
@@ -359,62 +373,69 @@ void FBlackJackGame::Results()
 	}
 	else if (!Player.IsPlayerBust() || !Player.IsSplitBust())
 	{
-		DealerPlay();
-		int winnings = 0;
-		int winningMulti = 0;
-		int splitWinMulti = 0;
-		FString playerResult;
-		FString splitResult;
-		//player results
-		if (CheckPush(playerHand))
+		if (Player.GetBet() == 0)
 		{
-			playerResult = "Player Push.   ";
-			winningMulti = 1;
-		}
-		else if (CheckWin(playerHand)&&!Player.IsPlayerBust())
-		{
-			playerResult = "Player Wins.   ";
-			winningMulti = 2;
-		}
-		else if (Player.IsPlayerBust())
-		{
-			playerResult = "Player Bust.   ";
+			std::cout << "You surrender. You get 1/2 your bet back back" << std::endl;
 		}
 		else
 		{
-			playerResult = "Player Lost.   ";
-		}
-		if (playSplitHand[0].value > 0)
-		{
-			//split results
-			if (CheckPush(playSplitHand))
+			DealerPlay();
+			int winnings = 0;
+			int winningMulti = 0;
+			int splitWinMulti = 0;
+			FString playerResult;
+			FString splitResult;
+			//player results
+			if (CheckPush(playerHand))
 			{
-				splitResult = "Split Hand Push.   ";
-				splitWinMulti = 1;
+				playerResult = "Player Push.   ";
+				winningMulti = 1;
 			}
-			else if (CheckWin(playSplitHand) && !Player.IsSplitBust())
+			else if (CheckWin(playerHand) && !Player.IsPlayerBust())
 			{
-				splitResult = "Split Hand Wins.   ";
-				splitWinMulti = 2;
+				playerResult = "Player Wins.   ";
+				winningMulti = 2;
 			}
-			else if (Player.IsSplitBust())
+			else if (Player.IsPlayerBust())
 			{
-				splitResult = "Split Hand Bust.   ";
-				splitWinMulti = 0;
+				playerResult = "Player Bust.   ";
 			}
 			else
 			{
-				splitResult = "Split Hand Lost.   ";
+				playerResult = "Player Lost.   ";
 			}
-			winnings = winnings + Player.GetBet()* winningMulti + Player.GetSplitBet()* splitWinMulti;
-			std::cout << playerResult << splitResult << " You got " << winnings << " Chips" << std::endl;
-			Player.GetWinnings(winnings);
-		}
-		else
-		{
-			winnings = winnings + Player.GetBet()* winningMulti;
-			std::cout << playerResult <<  " You got " << winnings << " Chips" << std::endl;
-			Player.GetWinnings(winnings);
+			if (playSplitHand[0].value > 0)
+			{
+				//split results
+				if (CheckPush(playSplitHand))
+				{
+					splitResult = "Split Hand Push.   ";
+					splitWinMulti = 1;
+				}
+				else if (CheckWin(playSplitHand) && !Player.IsSplitBust())
+				{
+					splitResult = "Split Hand Wins.   ";
+					splitWinMulti = 2;
+				}
+				else if (Player.IsSplitBust())
+				{
+					splitResult = "Split Hand Bust.   ";
+					splitWinMulti = 0;
+				}
+				else
+				{
+					splitResult = "Split Hand Lost.   ";
+				}
+				winnings = winnings + Player.GetBet()* winningMulti + Player.GetSplitBet()* splitWinMulti;
+				std::cout << playerResult << splitResult << " You got " << winnings << " Chips" << std::endl;
+				Player.GetWinnings(winnings);
+			}
+			else
+			{
+				winnings = winnings + Player.GetBet()* winningMulti;
+				std::cout << playerResult << " You got " << winnings << " Chips" << std::endl;
+				Player.GetWinnings(winnings);
+			}
 		}
 	}
 	else
@@ -461,6 +482,7 @@ bool FBlackJackGame::CheckPush(Card hand[])
 bool FBlackJackGame::CheckWin(Card hand[])
 {
 	int handValue = Player.CalculateValue(hand);
+	if (handValue > 21) { return false; }
 	int dealerValue = Dealer.CalculateValue(dealerHand);
 	if (handValue > dealerValue || Dealer.IsDealerBust())
 	{

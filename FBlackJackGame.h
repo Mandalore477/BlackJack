@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FBLACKJACKGAME
+#define FBLACKJACKGAME
 #include <string>
 #include <stdio.h>      /* printf, NULL */
 #include <stdlib.h>     /* srand, rand */
@@ -58,3 +59,4 @@ public:
 	int32 numberOfPlayers;
 };
 
+#endif

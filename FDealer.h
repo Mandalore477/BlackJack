@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DEALER
+#define DEALER
 #include<iostream>
 #include"FBlackJackGame.h"
 
@@ -37,3 +38,4 @@ public:
 
 };
 
+#endif

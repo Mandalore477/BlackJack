@@ -1,8 +1,8 @@
-#pragma once
+#ifndef BJPLAYER
+#define BJPLAYER
 #include<iostream>
 #include<string>
 #include"CardStruct.h"
-
 
 
 class FPlayer
@@ -64,3 +64,4 @@ public:
 
 };
 
+#endif 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CARDStruct
+#define CARDStruct
 #include<string>
 
 using FString = std::string;
@@ -10,3 +11,4 @@ struct Card
 	FString suit = " ";
 	FString face = " ";
 };
+#endif

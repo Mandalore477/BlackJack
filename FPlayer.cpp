@@ -1,7 +1,7 @@
 #include"FBlackJackGame.h"
 #include "FPlayer.h"
-#include<string>
 #include<iostream>
+#include<string>
 
 
 
@@ -62,8 +62,14 @@ void FPlayer::Play(Card hand[], Card deck[], int currentCard)
 			char response;
 			do
 			{
+				std::cin.clear();
 				std::cout << "A: Hit   S:Stay   ";
-				std::cin >> response;
+				while (std::cout << "A:Hit  S:Stay " && !(std::cin >> response))
+				{
+					std::cin.clear(); //clear bad input flag
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+					std::cout << "Invalid input; please re-enter.\n";
+				}
 				response = tolower(response);
 			} while (response != 'a' && response != 's');
 			if (response == 'a')
@@ -127,8 +133,13 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 				char response;
 				do
 				{
-					std::cout << "Split Hand A: Hit   S:Stay   ";
-					std::cin >> response;
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					while (std::cout << "Split Hand A:Hit  S:Stay " && !(std::cin >> response))
+					{
+						std::cin.clear(); //clear bad input flag
+						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+						std::cout << "Invalid input; please re-enter.\n";
+					}
 					response = tolower(response);
 				} while (response != 'a' && response != 's');
 				if (response == 'a')
@@ -187,11 +198,16 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card deck[], int currentC
 			}
 			else
 			{
-				char response;
+				char response=' ';
 				do
 				{
-					std::cout << "A: Hit   S:Stay   ";
-					std::cin >> response;
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					while (std::cout << "A:Hit  S:Stay " && !(std::cin >> response))
+					{
+						std::cin.clear(); //clear bad input flag
+						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+						std::cout << "Invalid input; please re-enter.\n";
+					}
 					response = tolower(response);
 				} while (response != 'a' && response != 's');
 				if (response == 'a')
@@ -244,12 +260,14 @@ void FPlayer::MakeBet()
 {
 	while (bet > chips || bet < 1)
 	{
+		std::cin.clear();
 		while (std::cout << "Bet ammount :" && !(std::cin >> bet))
 		{
 			std::cin.clear(); //clear bad input flag
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+			std::cin.ignore(std::numeric_limits<int>::max(), '\n'); //discard input
 			std::cout << "Invalid input; please re-enter.\n";
 		}
+		/*std::getline (std::istream, bet);*/
 	}
 	chips -= bet;
 }
@@ -299,7 +317,7 @@ void FPlayer::DisplaySplit(Card hand[], Card splitHand[])
 	{
 		if (hand[i].value == 0 && splitHand[i].value>0)
 		{
-			std::cout << "                         " << "//*" << splitHand[i].face << " " << splitHand[i].suit << "*\\\\" << std::endl;
+			std::cout << "                            " << "//*" << splitHand[i].face << " " << splitHand[i].suit << "*\\\\" << std::endl;
 		}
 		else if (hand[i].value > 0 && splitHand[i].value == 0)
 		{
@@ -325,10 +343,16 @@ bool FPlayer::IsSplit(Card hand[],int chips, int bet)
 	{
 		if (bet <= chips)
 		{
+			
 			while (response != 'y' && response != 'n')
 			{
-				std::cout << "would you like to split (Y/N)" << std::endl;
-				std::cin >> response;
+				std::cin.clear();
+				while (std::cout << "Would you like to split (Y?N)" && !(std::cin >> response))
+				{
+					std::cin.clear(); //clear bad input flag
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+					std::cout << "Invalid input; please re-enter.\n";
+				}
 				response = tolower(response);
 			}
 			if (response == 'y')
@@ -421,14 +445,20 @@ bool FPlayer::GetSplitHandBust()
 void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInHand)
 {
 	bust = false;
-	char response;
+	char response=' ';
+	//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	if (bet > chips)
 	{
 		do
 		{
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << "not enough chips for double down" << std::endl;
-			std::cout << "A: Hit   S:Stay       F:Surrender ";
-			std::cin >> response;
+			while (std::cout << "A:Hit  S:Stay   F:Surrender" && !(std::cin >> response))
+			{
+				std::cin.clear(); //clear bad input flag
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+				std::cout << "Invalid input; please re-enter.\n";
+			}
 			response = tolower(response);
 		} while (response != 'a' && response != 's' && response != 'f');
 		if (response == 'a')
@@ -440,6 +470,7 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInH
 			std::cout << "You surrender. You get " << (bet / 2) << " Chips back" << std::endl;
 			GetWinnings((bet / 2));
 			stay = true;
+			bust = true;
 			bet = 0;
 		}
 		else
@@ -452,8 +483,13 @@ void FPlayer::DoubleDownOpt(Card hand[],Card deck[],int currentCard, int cardInH
 	{
 		do
 		{
-			std::cout << "A: Hit   S:Stay    D:DoubleDown    F:Surrender ";
-			std::cin >> response;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			while (std::cout << "A:Hit  S:Stay    D:DoubleDown   F:Surrender" && !(std::cin >> response))
+			{
+				std::cin.clear(); //clear bad input flag
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+				std::cout << "Invalid input; please re-enter.\n";
+			}
 			response = tolower(response);
 		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
 		if (response == 'd')
@@ -487,13 +523,19 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card deck[], int currentCard,
 {
 	splitBust = false;
 	char response;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	if (bet > chips)
 	{
 		do
 		{
 			std::cout << "not enough chips for double down" << std::endl;
-			std::cout << "Split Hand   A: Hit   S:Stay ";
-			std::cin >> response;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			while (std::cout << "Split Hand    A:Hit  S:Stay" && !(std::cin >> response))
+			{
+				std::cin.clear(); //clear bad input flag
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+				std::cout << "Invalid input; please re-enter.\n";
+			}
 			response = tolower(response);
 		} while (response != 'a' && response != 's' && response != 'f');
 		if (response == 'a')
@@ -511,8 +553,13 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card deck[], int currentCard,
 	{
 		do
 		{
-			std::cout << "Split hand   A: Hit   S:Stay    D:DoubleDown ";
-			std::cin >> response;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			while (std::cout << "Split hand   A:Hit  S:Stay    D:DoubleDown " && !(std::cin >> response))
+			{
+				std::cin.clear(); //clear bad input flag
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+				std::cout << "Invalid input; please re-enter.\n";
+			}
 			response = tolower(response);
 		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
 		if (response == 'd')

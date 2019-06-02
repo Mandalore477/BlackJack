@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FDealer.cpp" />
+    <ClCompile Include="FDeck.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="FBlackJackGame.cpp" />
     <ClCompile Include="FPlayer.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="CardStruct.h" />
     <ClInclude Include="FBlackJackGame.h" />
     <ClInclude Include="FDealer.h" />
+    <ClInclude Include="FDeck.h" />
     <ClInclude Include="FPlayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
