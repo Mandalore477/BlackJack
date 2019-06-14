@@ -1,0 +1,9 @@
+﻿  FDealer.cpp
+  FDeck.cpp
+d:\tfs-projects\term 2(april-june 2019)\vgp122 programming fundamentals\blackjack\fdeck.cpp(105): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Main.cpp
+  FBlackJackGame.cpp
+d:\tfs-projects\term 2(april-june 2019)\vgp122 programming fundamentals\blackjack\fblackjackgame.cpp(161): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  FPlayer.cpp
+  Generating Code...
+  BlackJack.vcxproj -> D:\TFS-Projects\Term 2(April-June 2019)\VGP122 Programming Fundamentals\BlackJack\x64\Debug\BlackJack.exe
