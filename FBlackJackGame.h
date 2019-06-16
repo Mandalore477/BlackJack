@@ -9,18 +9,13 @@
 #include"FDealer.h"
 #include"FDeck.h"
 
-// to make the syntax unreal friendly
-
-using int32 = int;
-
-
 
 
 class FBlackJackGame
 {
 private:
-	int32 deckSize;
-	int32 currentCard;
+	int deckSize;
+	int currentCard;
 	Card blank;
 	bool isPlay;
 	Card deck[312];
@@ -28,22 +23,20 @@ private:
 	Card dealerHand[5];
 	Card playSplitHand[5];
 	bool quit;
+
+
+public:
+	FBlackJackGame();// constructor
+	FBlackJackGame(SDL_Renderer *renderer, Sprite *background);
+
+	Uint32			deltaT = 75;			// defines delay in time for updating game loop
+	Uint32			updatedTime = 0;			// used to determine if frame rate interval has elapsed
+
+	Sprite *playerCards[5] = { nullptr ,nullptr,nullptr,nullptr,nullptr };
+	Sprite *splitCards[5] = { nullptr ,nullptr,nullptr,nullptr,nullptr };
+	Sprite *dealerCards[5] = { nullptr ,nullptr,nullptr,nullptr,nullptr };
+
 	Sprite *background = nullptr;
-	Sprite *playerCard1 = nullptr;
-	Sprite *playerCard2 = nullptr;
-	Sprite *playerCard3 = nullptr;
-	Sprite *playerCard4 = nullptr;
-	Sprite *playerCard5 = nullptr;
-	Sprite *splitCard1 = nullptr;
-	Sprite *splitCard2 = nullptr;
-	Sprite *splitCard3 = nullptr;
-	Sprite *splitCard4 = nullptr;
-	Sprite *splitCard5 = nullptr;
-	Sprite *dealerCard1 = nullptr;
-	Sprite *dealerCard2 = nullptr;
-	Sprite *dealerCard3 = nullptr;
-	Sprite *dealerCard4 = nullptr;
-	Sprite *dealerCard5 = nullptr;
 	BJGraphics *cardSheet = nullptr;
 	Sprite *hitButton = nullptr;
 	Sprite *stayButton = nullptr;
@@ -51,11 +44,9 @@ private:
 	Sprite *surrenButton = nullptr;
 	SDL_Renderer *renderer = NULL;
 
-public:
-	FBlackJackGame();// constructor
-	FBlackJackGame(SDL_Renderer *renderer, Sprite *background);
+	void DrawScreen();
 
-	int32 GetCurrentCard();
+	int GetCurrentCard();
 	void SetCurrentCard();
 	void AddCurrentCard();
 	void NumberOfPlayers();
@@ -74,9 +65,11 @@ public:
 	bool GetQuit();
 	void PrintIntro();
 	void Smiley();
+
+	void drawText(string text, Uint16 posX, Uint16 posY);
 	
 	
-	int32 numberOfPlayers;
+	int numberOfPlayers;
 };
 
 #endif

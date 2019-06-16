@@ -5,7 +5,6 @@
 #include <time.h>       /* time */
 #include "FBlackJackGame.h"
 
-
 FPlayer Player;
 FDealer Dealer;
 FDeck Deck;
@@ -19,12 +18,37 @@ FBlackJackGame::FBlackJackGame(SDL_Renderer *renderer, Sprite * background)
 {
 	this->renderer = renderer;
 	this->background = background;
+	FPlayer PlayerFull(deltaT, updatedTime, renderer,background,playerCards,dealerCards,splitCards,hitButton,stayButton,doDownButton,surrenButton );
+	Player = PlayerFull;
+	FDealer DealerFull(renderer,dealerCards);
+	Dealer = DealerFull;
 }
 
 
 
 
-int32 FBlackJackGame::GetCurrentCard()
+void FBlackJackGame::DrawScreen()
+{
+	background->draw();
+	for (int i = 0; i < 5; i++)
+	{
+		playerCards[i]->drawCard();
+		splitCards[i]->drawCard();
+		dealerCards[i]->drawCard();
+	}
+	hitButton->drawCard();
+	stayButton->drawCard();
+	doDownButton->drawCard();
+	surrenButton->drawCard();
+
+	/** Update display */
+	SDL_RenderPresent(renderer);
+
+	/** update time */
+	updatedTime = SDL_GetTicks();
+}
+
+int FBlackJackGame::GetCurrentCard()
 {
 	return currentCard;
 }
@@ -139,6 +163,9 @@ void FBlackJackGame::ResetHands(Card playerHand[], Card dealerHand[], Card playS
 	{
 		dealerHand[i] = Dealer.blank;
 		Dealer.SetCardInHand((0 - Dealer.GetCardInHand()));
+		playerCards[i]->setVisible(false);
+		splitCards[i]->setVisible(false);
+		dealerCards[i]->setVisible(false);
 	}
 	Dealer.ResetStay();
 }
@@ -161,163 +188,143 @@ void FBlackJackGame::Deal(Card playerHand[], Card dealerHand[])
 
 void FBlackJackGame::PlayGame()
 {
-	cardSheet = new BJGraphics("Images/CardDeck.png", 320, 365, 81, 117, renderer);
-	playerCard1  = new Sprite("Images/CardDeck.png", 0, 365, 81, 117, renderer);
-	playerCard2	 = new Sprite("Images/CardDeck.png", 10, 320, 81, 117, renderer);
-	playerCard3	 = new Sprite("Images/CardDeck.png", 20, 300, 81, 117, renderer);
-	playerCard4	 = new Sprite("Images/CardDeck.png", 30, 280, 81, 117, renderer);
-	playerCard5	 = new Sprite("Images/CardDeck.png", 40, 240, 81, 117, renderer);
-	splitCard1	 = new Sprite("Images/CardDeck.png", 50, 200, 81, 117, renderer);
-	splitCard2	 = new Sprite("Images/CardDeck.png", 60, 160, 81, 117, renderer);
-	splitCard3	 = new Sprite("Images/CardDeck.png", 70, 120, 81, 117, renderer);
-	splitCard4	 = new Sprite("Images/CardDeck.png", 80, 80, 81, 117, renderer);
-	splitCard5	 = new Sprite("Images/CardDeck.png", 90, 40, 81, 117, renderer);
-	dealerCard1	 = new Sprite("Images/CardDeck.png", 100, 360, 81, 117, renderer);
-	dealerCard2	 = new Sprite("Images/CardDeck.png", 110, 320, 81, 117, renderer);
-	dealerCard3	 = new Sprite("Images/CardDeck.png", 120, 280, 81, 117, renderer);
-	dealerCard4	 = new Sprite("Images/CardDeck.png", 130, 240, 81, 117, renderer);
-	dealerCard5	 = new Sprite("Images/CardDeck.png", 140, 200, 81, 117, renderer);
-	hitButton    = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
-	stayButton 	 = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
-	doDownButton = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
-	surrenButton = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
-	
-	playerCard1	->draw();
-	playerCard2	->draw();
-	playerCard3	->draw();
-	playerCard4	->draw();
-	playerCard5	->draw();
-	splitCard1	->draw();
-	splitCard2	->draw();
-	splitCard3	->draw();
-	splitCard4	->draw();
-	splitCard5	->draw();
-	dealerCard1	->draw();
-	dealerCard2	->draw();
-	dealerCard3	->draw();
-	dealerCard4	->draw();
-	dealerCard5	->draw();
-	hitButton	->draw();
-	stayButton	->draw();
-	doDownButton->draw();
-	surrenButton->draw();
+	for (int i = 0; i < 5; i++)
+	{
+		playerCards[i] = new Sprite("Images/CardDeck.png", 330 + i*10, 320 - i*15, 81, 117, renderer);
+		splitCards[i] = new Sprite("Images/CardDeck.png", 200 + i*10, 320 - i*15, 81, 117, renderer);
+		dealerCards[i] = new Sprite("Images/CardDeck.png", 300 + i*10, 150, 81, 117, renderer);
+	}
 
-	SDL_RenderPresent(renderer);
+	hitButton    = new Sprite("Images/CardDeck.png", 50,  400, 81 * 2, 117 / 2+1, renderer);
+	hitButton->setRow(8);								  
+	hitButton->setCurrentFrame(3);						  
+	stayButton 	 = new Sprite("Images/CardDeck.png", 150, 400, 81 * 2, 117 / 2+1, renderer);
+	stayButton->setRow(9);								  
+	stayButton->setCurrentFrame(3);						  
+	doDownButton = new Sprite("Images/CardDeck.png", 250, 400, 81 * 2, 117 / 2+1, renderer);
+	doDownButton->setRow(8);							  
+	doDownButton->setCurrentFrame(4);					  
+	surrenButton = new Sprite("Images/CardDeck.png", 350, 400, 81 * 2, 117 / 2+1, renderer);
+	surrenButton->setRow(9);
+	surrenButton->setCurrentFrame(4);
+	
 
 	quit = false;
 	while (quit == false)
 	{
-		srand(time(NULL));
-		int seperatorCard = ((rand() % 100) + 150);
-		while (GetCurrentCard() < seperatorCard && !GetIsPlay() && quit == false)
+		if (SDL_GetTicks() - updatedTime >= deltaT)
 		{
-			ResetHands(playerHand, dealerHand, playSplitHand);
-			Player.DisplayPlayerPre();
-			Player.MakeBet();
-			system("cls");
-
-			Deal(playerHand, dealerHand);
-			if (Dealer.CheckInsurance(dealerHand))
+	DrawScreen();
+			srand(time(NULL));
+			int seperatorCard = ((rand() % 100) + 150);
+			while (GetCurrentCard() < seperatorCard && !GetIsPlay() && quit == false)
 			{
-				Insurance();
-			}
-			if (!Dealer.IsBlackJack())
-			{
+				ResetHands(playerHand, dealerHand, playSplitHand);
+				Player.DisplayPlayerPre();
+				Player.MakeBet();
+				system("cls");
 
-				if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
+				Deal(playerHand, dealerHand);
+				if (Dealer.CheckInsurance(dealerHand))
 				{
-					if (playerHand[0].value == 1) { playerHand[0].value = 11; }
-					playSplitHand[0] = playerHand[1];
-					AddCurrentCard();
-					playSplitHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
-					AddCurrentCard();
-					playerHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
-					system("cls");
-					Player.DisplaySplit(playerHand, playSplitHand);
-					Dealer.DisplayDealerPre(dealerHand);
-					while (!Player.GetStay())
+					Insurance();
+				}
+				if (!Dealer.IsBlackJack())
+				{
+
+					if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
 					{
-						Player.SplitPlay(playerHand, playSplitHand, Deck.getDeckPtr(), GetCurrentCard());
-						system("cls");
+						if (playerHand[0].value == 1) { playerHand[0].value = 11; }
+						playSplitHand[0] = playerHand[1];
 						AddCurrentCard();
+						playSplitHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
+						AddCurrentCard();
+						playerHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
+						system("cls");
 						Player.DisplaySplit(playerHand, playSplitHand);
 						Dealer.DisplayDealerPre(dealerHand);
+						while (!Player.GetStay())
+						{
+							Player.SplitPlay(playerHand, playSplitHand, Deck.getDeckPtr(), GetCurrentCard());
+							system("cls");
+							AddCurrentCard();
+							Player.DisplaySplit(playerHand, playSplitHand);
+							Dealer.DisplayDealerPre(dealerHand);
+						}
 					}
+					else
+					{
+						while (!Player.GetStay())
+						{
+							Player.Play(playerHand, Deck.getDeckPtr(), GetCurrentCard());
+							system("cls");
+							AddCurrentCard();
+							Player.DisplayPlayer(playerHand);
+							Dealer.DisplayDealerPre(dealerHand);
+						}
+					}
+					Results();
+				}
+				char response = ' ';
+				if (Player.GetChips() <= 0)
+				{
+					quit = true;
+					system("pause");
 				}
 				else
 				{
-					while (!Player.GetStay())
+					while (response != 'y' && response != 'n')
 					{
-						Player.Play(playerHand, Deck.getDeckPtr(), GetCurrentCard());
-						system("cls");
-						AddCurrentCard();
-						Player.DisplayPlayer(playerHand);
-						Dealer.DisplayDealerPre(dealerHand);
+						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+						while (std::cout << "Would you like to continue playing (Y/N)" && !(std::cin >> response))
+						{
+							std::cin.clear(); //clear bad input flag
+							std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
+							std::cout << "Invalid input; please re-enter.\n";
+						}
+						response = tolower(response);
+						if (response == 'n')
+						{
+							quit = true;
+						}
+						else { quit = false; }
 					}
 				}
-				Results();
 			}
-			char response = ' ';
-			if (Player.GetChips() <= 0)
+			if (quit == true)
 			{
-				quit = true;
-				system("pause");
+				system("cls");
+				Smiley();
+				if (Player.GetChips() <= 0)
+				{
+					std::cout << "You ran out of chips" << std::endl;
+				}
+				std::cout << "Thanks for playing" << std::endl;
 			}
 			else
 			{
-				while (response != 'y' && response != 'n')
-				{
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-					while (std::cout << "Would you like to continue playing (Y/N)" && !(std::cin >> response))
-					{
-						std::cin.clear(); //clear bad input flag
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-						std::cout << "Invalid input; please re-enter.\n";
-					}
-					response = tolower(response);
-					if (response == 'n')
-					{
-						quit = true;
-					}
-					else { quit = false; }
-				}
+				std::cout << "Seperator card reached. Reshuffling the deck!";
+				currentCard = 0;
+				Deck.ShuffleDeck();
 			}
+			DrawScreen();
 		}
-		if (quit== true)
-		{
-			system("cls");
-			Smiley();
-			if (Player.GetChips() <= 0)
-			{
-				std::cout << "You ran out of chips" << std::endl;
-			}
-			std::cout << "Thanks for playing" << std::endl;
-		}else{
-			std::cout << "Seperator card reached. Reshuffling the deck!";
-			currentCard = 0;
-			Deck.ShuffleDeck();
-		}
-	} 
-	delete playerCard1;
-	delete playerCard2;
-	delete playerCard3;
-	delete playerCard4;
-	delete playerCard5;
-	delete splitCard1;
-	delete splitCard2;
-	delete splitCard3;
-	delete splitCard4;
-	delete splitCard5;
-	delete dealerCard1;
-	delete dealerCard2;
-	delete dealerCard3;
-	delete dealerCard4;
-	delete dealerCard5;
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		delete playerCards[i];
+		delete splitCards[i];
+		delete dealerCards[i];
+	}
+
 	delete cardSheet;
 	delete hitButton;
 	delete stayButton;
 	delete doDownButton;
 	delete surrenButton;
+
+	
 }
 
 void FBlackJackGame::Results()
@@ -464,6 +471,7 @@ bool FBlackJackGame::GetQuit()
 
 void FBlackJackGame::PrintIntro()
 {
+
 	std::cout << "		 _     _            _    _            _" << std::endl;
 	std::cout << "		| |   | |          | |  (_)          | |" << std::endl;
 	std::cout << "		| |__ | | __ _  ___| | ___  __ _  ___| | __" << std::endl;
@@ -520,6 +528,30 @@ void FBlackJackGame::Smiley()
 	std::cout << "                    ''ooooooooo''" << std::endl;
 }
 
+void FBlackJackGame::drawText(string text, Uint16 posX, Uint16 posY)
+{
+	const char* textChar = text.c_str();
+	TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 24); //this opens a font style and sets a size
 
+	SDL_Color White = { 255, 255, 255 };  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
+
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, textChar, White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); //now you can convert it into a texture
+
+	SDL_Rect Message_rect; //create a rect
+	Message_rect.x = posX;  //controls the rect's x coordinate 
+	Message_rect.y = posY; // controls the rect's y coordinte
+	Message_rect.w = 100; // controls the width of the rect
+	Message_rect.h = 30; // controls the height of the rect
+
+	//Mind you that (0,0) is on the top left of the window/screen, think a rect as the text's box, that way it would be very simple to understance
+
+	//Now since it's a texture, you have to put RenderCopy in your game loop area, the area where the whole code executes
+
+	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); //you put the renderer's name first, the Message, the crop size(you can ignore this if you don't want to dabble with cropping), and the rect which is the size and coordinate of your texture
+
+	//Don't forget too free your surface and texture
+}
 
 

@@ -55,6 +55,19 @@ void Sprite::draw()
 	}
 }
 
+void Sprite::drawCard()
+{
+	/** Check if sprite should be drawn to the screen */
+	if (this->visible)
+	{
+		/** Position sprite on Screen */
+		SDL_Rect dest = { xpos, ypos, rect.w / 2,rect.h / 2 };
+
+		/** Draw Sprite to Screen */
+		SDL_RenderCopy(renderer, image, &rect, &dest);
+	}
+}
+
 void Sprite::animate(Uint16 startFrame, Uint16 endFrame)
 {
 	/** Store current animation frame */

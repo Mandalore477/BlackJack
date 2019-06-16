@@ -1,3 +1,4 @@
+#include"FBlackJackGame.h"
 #include "FDealer.h"
 #include"CardStruct.h"
 
@@ -5,6 +6,15 @@
 
 FDealer::FDealer()
 {
+}
+
+FDealer::FDealer(SDL_Renderer* renderer, Sprite *dealerCards[5])
+{
+	this->renderer = renderer;
+	for (int i = 0; i < 5; i++)
+	{
+		this->dealerCards[i] = dealerCards[i];
+	}
 }
 
 
@@ -29,12 +39,16 @@ void FDealer::Hit(Card hand[], Card *deckPtr, int currentCard)
 		else
 		{
 			hand[cardInHand] = *(deckPtr + currentCard);
+			dealerCards[cardInHand]->setRow(hand[cardInHand].row);
+			dealerCards[cardInHand]->setCurrentFrame(hand[cardInHand].frame);
+			dealerCards[cardInHand]->setVisible(true);
 			SetCardInHand(1);
 		}
 		if (handTotal > 21)
 		{
 			bust = true;
 		}
+		DrawScreen();
 }
 
 int FDealer::CalculateValue(Card hand[])
@@ -104,6 +118,22 @@ void FDealer::SetBlackJack(bool blackJackResult)
 	blackJack = blackJackResult;
 }
 
+void FDealer::DrawScreen()
+{
+	//background->draw();
+	for (int i = 0; i < 5; i++)
+	{
+		//playerCards[i]->drawCard();
+		//splitCards[i]->drawCard();
+		dealerCards[i]->drawCard();
+	}
+	//hitButton->drawCard();
+	//stayButton->drawCard();
+	//doDownButton->drawCard();
+	//surrenButton->drawCard();
+
+	SDL_RenderPresent(renderer);
+}
 void FDealer::DisplayDealerPre(Card hand[])
 {
 	std::cout << "Dealer" << std::endl;

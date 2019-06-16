@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 	SDL_RenderPresent(renderer);
 	
 	FBlackJackGame BJGame(renderer, background);
-	//BJGame.PrintIntro();
+	BJGame.PrintIntro();
 	BJGame.SetGame();
 	BJGame.PlayGame();
 

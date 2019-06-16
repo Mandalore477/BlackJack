@@ -13,5 +13,7 @@ struct Card
 	int32 value = 0;
 	FString suit = " ";
 	FString face = " ";
+	Uint16 row = 0;
+	Uint16 frame = 0;
 };
 #endif

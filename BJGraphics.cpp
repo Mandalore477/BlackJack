@@ -78,3 +78,5 @@ void BJGraphics::updateJump()
 	/** Update Y position of Sprite */
 	jump->update(this);
 }
+
+

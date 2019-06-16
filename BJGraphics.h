@@ -20,6 +20,7 @@ public:
 	void startJump();
 	void updateJump();
 
+
 private:
 	Jump* jump;
 };

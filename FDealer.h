@@ -19,6 +19,7 @@ private:
 
 public:
 	FDealer();
+	FDealer(SDL_Renderer *renderer, Sprite *dealerCards[5]);
 	~FDealer();
 	
 	void Hit(Card hand[], Card *deckPtr, int currentCard);
@@ -36,6 +37,11 @@ public:
 
 	Card blank;
 	Card hand[5];
+
+	SDL_Renderer *renderer;
+	Sprite *dealerCards[5] = { nullptr, nullptr, nullptr, nullptr, nullptr };
+
+	void DrawScreen();
 
 };
 

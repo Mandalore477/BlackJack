@@ -11,6 +11,25 @@ FPlayer::FPlayer()
 {
 }
 
+FPlayer::FPlayer(Uint32 deltaT, Uint32 updatedTime, SDL_Renderer * renderer,Sprite *background, Sprite *playerCards[5], Sprite *dealerCards[5], Sprite *splitCards[5], Sprite * hitButton, Sprite * stayButton, Sprite * doDownButton, Sprite * surrenButton)
+{
+	this->deltaT = deltaT;
+	this->updatedTime = updatedTime;
+	this->renderer = renderer;
+	this->background = background;
+	for (int i = 0; i < 5; i++)
+	{
+		this->playerCards[i] = playerCards[i];
+		this->dealerCards[i] = dealerCards[i];
+		this->splitCards[i] = splitCards[i];
+	}
+	this->hitButton = hitButton;
+	this->stayButton = stayButton;
+	this->doDownButton = doDownButton;
+	this->surrenButton = surrenButton;
+
+}
+
 
 FPlayer::~FPlayer()
 {
@@ -26,14 +45,14 @@ void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 		if (handTotal == 21)
 		{
 			stay = true;
-			std::cout << "Player Gets BlackJack!!"<< std::endl;
+			std::cout << "Player Gets BlackJack!!" << std::endl;
 			playBlackJack = true;
 		}
 		else
 		{
 			DoubleDownOpt(hand, deckPtr, currentCard, cardInHand);
 		}
-
+		DrawScreen();
 	}
 	else
 	{
@@ -59,22 +78,14 @@ void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 		}
 		else
 		{
-			char response;
+			SetButtonVisible(true, true, false, false);
 			do
 			{
-				std::cin.clear();
-				std::cout << "A: Hit   S:Stay   ";
-				while (std::cout << "A:Hit  S:Stay " && !(std::cin >> response))
-				{
-					std::cin.clear(); //clear bad input flag
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-					std::cout << "Invalid input; please re-enter.\n";
-				}
-				response = tolower(response);
-			} while (response != 'a' && response != 's');
+				DrawScreen();
+			} while (!ClickHit() && !ClickStay());
 			if (response == 'a')
 			{
-				Hit(hand, deckPtr, currentCard,cardInHand);
+				Hit(hand, deckPtr, currentCard, cardInHand);
 			}
 			else
 			{
@@ -83,7 +94,11 @@ void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 			}
 		}
 	}
-
+	if (stay)
+	{
+		SetButtonVisible(false, false, false, false);
+		DrawScreen();
+	}
 }
 
 void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int currentCard)
@@ -130,18 +145,11 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 			}
 			else
 			{
-				char response;
+				SetButtonVisible(true, true, false, false);
 				do
 				{
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-					while (std::cout << "Split Hand A:Hit  S:Stay " && !(std::cin >> response))
-					{
-						std::cin.clear(); //clear bad input flag
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-						std::cout << "Invalid input; please re-enter.\n";
-					}
-					response = tolower(response);
-				} while (response != 'a' && response != 's');
+					DrawScreen();
+				} while (!ClickHit() && !ClickStay());
 				if (response == 'a')
 				{
 					SplitHit(splitHand, deckPtr, currentCard,splitCardInHand);
@@ -153,7 +161,11 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 				}
 			}
 		}
-
+		if (splitStay)
+		{
+			SetButtonVisible(false, false, false, false);
+			DrawScreen();
+		}
 
 	}
 	//Back to Player hand
@@ -198,18 +210,10 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 			}
 			else
 			{
-				char response=' ';
-				do
-				{
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-					while (std::cout << "A:Hit  S:Stay " && !(std::cin >> response))
-					{
-						std::cin.clear(); //clear bad input flag
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-						std::cout << "Invalid input; please re-enter.\n";
-					}
-					response = tolower(response);
-				} while (response != 'a' && response != 's');
+				SetButtonVisible(true, true, false, false);
+				do{
+					DrawScreen();
+				} while (!ClickHit() && !ClickStay());
 				if (response == 'a')
 				{
 					Hit(hand, deckPtr, currentCard, cardInHand);
@@ -221,6 +225,11 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 				}
 			}
 		}
+	}
+	if (stay)
+	{
+		SetButtonVisible(false, false, false, false);
+		DrawScreen();
 	}
 }
 
@@ -242,7 +251,7 @@ int FPlayer::CalculateValue(Card hand[])
 	
 	return value;
 }
-//return extra cards minus the original 2 dealt
+//return number of cards in hand
 int FPlayer::GetCardInHand(Card hand[])
 {
 	cardInHand = 0;
@@ -343,19 +352,12 @@ bool FPlayer::IsSplit(Card hand[],int chips, int bet)
 	{
 		if (bet <= chips)
 		{
-			
-			while (response != 'y' && response != 'n')
+			SetButtonVisible(true, true, false, false);
+			while (!ClickHit() && !ClickStay())
 			{
-				std::cin.clear();
-				while (std::cout << "Would you like to split (Y?N)" && !(std::cin >> response))
-				{
-					std::cin.clear(); //clear bad input flag
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-					std::cout << "Invalid input; please re-enter.\n";
-				}
-				response = tolower(response);
+				DrawScreen();
 			}
-			if (response == 'y')
+			if (response == 'a')
 			{
 				isSplit = true;
 				ReBet();
@@ -382,6 +384,7 @@ void FPlayer::ReBet()
 
 void FPlayer::ResetPlayer(Card hand[], Card splitHand[])
 {
+	SetButtonVisible(false, false, false, false);
 	stay = false;
 	bust = false;
 	value = 0;
@@ -397,7 +400,14 @@ void FPlayer::ResetPlayer(Card hand[], Card splitHand[])
 	{
 		hand[i] = blank;
 		splitHand[i] = blank;
+		playerCards[i]->setVisible(false);
+		playerCards[i]->setRow(4);
+		playerCards[i]->setCurrentFrame(0);
+		splitCards[i]->setVisible(false);
+		splitCards[i]->setRow(4);
+		splitCards[i]->setCurrentFrame(0);
 	}
+	DrawScreen();
 }
 
 bool FPlayer::GetStay()
@@ -408,22 +418,32 @@ bool FPlayer::GetStay()
 void FPlayer::Hit(Card hand[], Card *deckPtr, int currentCard, int cardInHand)
 {
 	hand[cardInHand] = *(deckPtr + currentCard);
+	playerCards[cardInHand]->setRow(hand[cardInHand].row);
+	playerCards[cardInHand]->setCurrentFrame(hand[cardInHand].frame);
+	playerCards[cardInHand]->setVisible(true);
+	DrawScreen();
 	cardInHand++;
 	if (CalculateValue(hand) > 21)
 	{
 		stay = true;
 		bust = true;
+		SetButtonVisible(false, false, false, false);
 	}
 }
 
 void FPlayer::SplitHit(Card splitHand[], Card *deckPtr, int currentCard, int cardInHand)
 {
 	splitHand[cardInHand] = *(deckPtr + currentCard);
+	splitCards[cardInHand]->setRow(splitHand[cardInHand].row);
+	splitCards[cardInHand]->setCurrentFrame(splitHand[cardInHand].frame);
+	splitCards[cardInHand]->setVisible(true);
+	DrawScreen();
 	cardInHand++;
 	if (CalculateValue(splitHand) > 21)
 	{
 		splitStay = true;
 		splitBust = true;
+		SetButtonVisible(false, false, false, false);
 	}
 }
 
@@ -445,22 +465,13 @@ bool FPlayer::GetSplitHandBust()
 void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardInHand)
 {
 	bust = false;
-	char response=' ';
-	//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	if (bet > chips)
 	{
+		SetButtonVisible(true, true, false, true);
 		do
 		{
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "not enough chips for double down" << std::endl;
-			while (std::cout << "A:Hit  S:Stay   F:Surrender" && !(std::cin >> response))
-			{
-				std::cin.clear(); //clear bad input flag
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-				std::cout << "Invalid input; please re-enter.\n";
-			}
-			response = tolower(response);
-		} while (response != 'a' && response != 's' && response != 'f');
+			DrawScreen();
+		} while (!ClickHit() && !ClickStay() && !ClickSurren());
 		if (response == 'a')
 		{
 			Hit(hand, deckPtr, currentCard, cardInHand);
@@ -481,17 +492,11 @@ void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardI
 	}
 	else
 	{
+		SetButtonVisible(true, true, true, true);
 		do
 		{
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			while (std::cout << "A:Hit  S:Stay    D:DoubleDown   F:Surrender" && !(std::cin >> response))
-			{
-				std::cin.clear(); //clear bad input flag
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-				std::cout << "Invalid input; please re-enter.\n";
-			}
-			response = tolower(response);
-		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
+			DrawScreen();
+		} while (!ClickHit() && !ClickStay() && !ClickDoDown() && !ClickSurren());
 		if (response == 'd')
 		{
 			Hit(hand, deckPtr, currentCard, cardInHand);
@@ -517,27 +522,24 @@ void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardI
 			stay = true;
 		}
 	}
+	if (stay)
+	{
+		SetButtonVisible(false, false, false, false);
+		DrawScreen();
+	}
 }
 
 void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCard, int splitCardInHand)
 {
 	splitBust = false;
-	char response;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	if (bet > chips)
 	{
+		SetButtonVisible(true, true, false, false);
 		do
 		{
-			std::cout << "not enough chips for double down" << std::endl;
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			while (std::cout << "Split Hand    A:Hit  S:Stay" && !(std::cin >> response))
-			{
-				std::cin.clear(); //clear bad input flag
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-				std::cout << "Invalid input; please re-enter.\n";
-			}
-			response = tolower(response);
-		} while (response != 'a' && response != 's' && response != 'f');
+			DrawScreen();
+		} while (!ClickHit() && !ClickStay() );
 		if (response == 'a')
 		{
 			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
@@ -551,17 +553,14 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCar
 	}
 	else
 	{
+		SetButtonVisible(true, true, true, false);
 		do
 		{
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			while (std::cout << "Split hand   A:Hit  S:Stay    D:DoubleDown " && !(std::cin >> response))
-			{
-				std::cin.clear(); //clear bad input flag
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-				std::cout << "Invalid input; please re-enter.\n";
-			}
-			response = tolower(response);
-		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
+			DrawScreen();
+		} while (!ClickHit() && !ClickStay() && !ClickDoDown());
+		
+		doDownButton->setVisible(false);
+		
 		if (response == 'd')
 		{
 			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
@@ -579,6 +578,12 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCar
 			std::cout << "You Stay" << std::endl;
 			splitStay = true;
 		}
+		
+	}
+	if (splitStay)
+	{
+		SetButtonVisible(false, false, false, false);
+		DrawScreen();
 	}
 }
 
@@ -595,6 +600,102 @@ int FPlayer::GetSplitBet()
 bool FPlayer::IsPlayBJ()
 {
 	return playBlackJack;
+}
+
+void FPlayer::SetButtonVisible(bool hitButton, bool stayButton, bool doDownButton, bool surrenButton)
+{
+	this->hitButton->setVisible(hitButton);
+	this->stayButton->setVisible(stayButton);
+	this->doDownButton->setVisible(doDownButton);
+	this->surrenButton->setVisible(surrenButton);
+}
+
+void FPlayer::DrawScreen()
+{
+	background->draw();
+	for (int i = 0; i < 5; i++)
+	{
+		playerCards[i]->drawCard();
+		splitCards[i]->drawCard();
+		dealerCards[i]->drawCard();
+	}
+	hitButton->drawCard();
+	stayButton->drawCard();
+	doDownButton->drawCard();
+	surrenButton->drawCard();
+
+	SDL_RenderPresent(renderer);
+}
+
+bool FPlayer::ClickHit()
+{
+	/** Directly read from Keyboard */
+	const Uint8*keys = SDL_GetKeyboardState(nullptr);
+	SDL_Rect mouseClick;
+	if (SDL_SCANCODE_A ||
+		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= hitButton->getXPos()
+		&& mouseClick.x >= hitButton->getXPos() + hitButton->getWidth() && mouseClick.y <= hitButton->getYPos()
+		&& mouseClick.y >= hitButton->getYPos() + hitButton->getHeight()))
+	{
+		response = 'a';
+		return true;
+	}
+	else
+		return false;
+}
+
+bool FPlayer::ClickStay()
+{
+	/** Directly read from Keyboard */
+	const Uint8*keys = SDL_GetKeyboardState(nullptr);
+
+	SDL_Rect mouseClick;
+	if (SDL_SCANCODE_S ||
+		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= stayButton->getXPos()
+		&& mouseClick.x >= stayButton->getXPos() + stayButton->getWidth() && mouseClick.y <= stayButton->getYPos()
+		&& mouseClick.y >= stayButton->getYPos() + stayButton->getHeight()))
+	{
+		response = 's';
+		return true;
+	}
+	else
+		return false;
+}
+
+bool FPlayer::ClickDoDown()
+{
+	/** Directly read from Keyboard */
+	const Uint8*keys = SDL_GetKeyboardState(nullptr);
+
+	SDL_Rect mouseClick;
+	if (SDL_SCANCODE_D ||
+		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= doDownButton->getXPos()
+		&& mouseClick.x >= doDownButton->getXPos() + doDownButton->getWidth() && mouseClick.y <= doDownButton->getYPos()
+		&& mouseClick.y >= doDownButton->getYPos() + doDownButton->getHeight()))
+	{
+		response = 'd';
+		return true;
+	}
+	else
+		return false;
+}
+
+bool FPlayer::ClickSurren()
+{
+	/** Directly read from Keyboard */
+	const Uint8*keys = SDL_GetKeyboardState(nullptr);
+
+	SDL_Rect mouseClick;
+	if (SDL_SCANCODE_F ||
+		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= surrenButton->getXPos()
+		&& mouseClick.x >= surrenButton->getXPos() + surrenButton->getWidth() && mouseClick.y <= surrenButton->getYPos()
+		&& mouseClick.y >= surrenButton->getYPos() + surrenButton->getHeight()))
+	{
+		response = 'f';
+		return true;
+	}
+	else
+		return false;
 }
 
 

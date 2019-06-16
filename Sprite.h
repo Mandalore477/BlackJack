@@ -11,6 +11,7 @@ public:
 	void animate ( Uint16 startFrame, Uint16 endFrame);
 	void move (int deltaX, int deltaY);	
 	void draw();
+	void drawCard();
 	
 	void setCurrentFrame( Uint16 frame );
 	void setRow( Uint16 row );

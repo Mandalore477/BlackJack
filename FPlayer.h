@@ -8,6 +8,7 @@
 class FPlayer
 {
 private:
+
 	bool bust;
 	bool stay;
 	int handTotal;
@@ -24,10 +25,29 @@ private:
 	int splitValue;
 	int splitBet;
 	bool playBlackJack;
+	char response;
 	
 public:
 	FPlayer();
+	FPlayer(Uint32 deltaT, Uint32 updatedTime, SDL_Renderer *renderer,Sprite *background, Sprite *playerCards[5], Sprite *dealerCards[5], Sprite *splitCards[5], Sprite *hitButton, Sprite *stayButton,
+		Sprite *doDownButton,Sprite *surrenButton);
 	~FPlayer();
+
+	Uint32			deltaT = 75;			// defines delay in time for updating game loop
+	Uint32			updatedTime = 0;			// used to determine if frame rate interval has elapsed
+
+	Sprite *playerCards[5] = { nullptr ,nullptr,nullptr,nullptr,nullptr };
+	Sprite *splitCards[5] = { nullptr ,nullptr,nullptr,nullptr,nullptr };
+	Sprite *dealerCards[5] = { nullptr ,nullptr,nullptr,nullptr,nullptr };
+
+	Sprite *background = nullptr;
+	BJGraphics *cardSheet = nullptr;
+	Sprite *hitButton = nullptr;
+	Sprite *stayButton = nullptr;
+	Sprite *doDownButton = nullptr;
+	Sprite *surrenButton = nullptr;
+	SDL_Renderer *renderer = NULL;
+	
 	void Play(Card hand[], Card *deckPtr,int currentCard);
 	void SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int currentCard);
 	int CalculateValue(Card hand[]);
@@ -54,6 +74,13 @@ public:
 	int GetSplitValue();
 	int GetSplitBet();
 	bool IsPlayBJ();
+
+	void SetButtonVisible(bool hitButton, bool stayButton, bool doDownButton, bool surrenButton);
+	void DrawScreen();
+	bool ClickHit();
+	bool ClickStay();
+	bool ClickDoDown();
+	bool ClickSurren();
 
 
 	Card blank;
