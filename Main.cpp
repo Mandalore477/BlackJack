@@ -4,13 +4,13 @@
 #include "FBlackJackGame.h"
 #include "FPlayer.h"
 #include "FDealer.h"
-#include "Luigi.h"
+#include "BJGraphics.h"
 
 // to make the syntax unreal friendly
 using FString = std::string;
 using int32 = int;
 
-FBlackJackGame BJGame;
+//FBlackJackGame BJGame(renderer, background);
 
 int main(int argc, char** argv)
 {
@@ -19,6 +19,8 @@ int main(int argc, char** argv)
 	bool			done = false;
 	SDL_Window		*window = NULL;
 	SDL_Renderer	*renderer = NULL;
+
+
 
 	/** Initialize Event Variables */
 	SDL_Event event;
@@ -32,13 +34,9 @@ int main(int argc, char** argv)
 
 	/** Initialize sprite variables */
 	Sprite *background = nullptr;
-	Sprite *coin = nullptr;
-	Luigi *cardSheet = nullptr;
-	Sprite *lives = nullptr;
-	Sprite *menu = nullptr;
-	Sprite *startButton = nullptr;
 
 
+	
 
 	/** Initialize SDL */
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -50,7 +48,7 @@ int main(int argc, char** argv)
 	atexit(SDL_Quit);
 
 	/** Create Window for Project */
-	window = SDL_CreateWindow("Luigi's Revenge", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Black Jack Game", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
 	if (!window)
 	{
@@ -67,19 +65,16 @@ int main(int argc, char** argv)
 	}
 
 	/** Initialize sprite properties */
-	background = new Sprite("Images/BlackJack_Background.bmp", 0, 0, 7251, 480, renderer);
-	//coin = new Sprite("Images/Coin_Spritesheet.png", 420, 360, 28, 32, renderer);
-	cardSheet= new Luigi("Images/CardDeck.png", 320, 365, 32, 64, renderer);
-	//lives = new Sprite("Images/Luigi_Spritesheet.png", 10, 10, 32, 64, renderer);
-	//menu = new Sprite("Images/Pong_MainMenu.bmp", 0, 0, 640, 480, renderer);
-	//startButton = new Sprite("Images/Pong_MenuOp1.bmp", 125, 155, 387, 50, renderer);
+	background = new Sprite("Images/BlackJack_Background.bmp", 0, 0, 705, 530, renderer);
+
 
 	background->draw();
-	
+
 	/** Update display */
 	SDL_RenderPresent(renderer);
 	
-	BJGame.PrintIntro();
+	FBlackJackGame BJGame(renderer, background);
+	//BJGame.PrintIntro();
 	BJGame.SetGame();
 	BJGame.PlayGame();
 
@@ -87,11 +82,6 @@ int main(int argc, char** argv)
 
 	/** Free memory used for sprites */
 	delete background;
-	delete coin;
-	delete cardSheet;
-	delete lives;
-	delete menu;
-	delete startButton;
 
 
 	/** Free SDL resources */

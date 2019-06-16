@@ -129,7 +129,7 @@
     <ClCompile Include="FDealer.cpp" />
     <ClCompile Include="FDeck.cpp" />
     <ClCompile Include="Jump.cpp" />
-    <ClCompile Include="Luigi.cpp" />
+    <ClCompile Include="BJGraphics.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="FBlackJackGame.cpp" />
     <ClCompile Include="FPlayer.cpp" />
@@ -144,7 +144,7 @@
     <ClInclude Include="FDeck.h" />
     <ClInclude Include="FPlayer.h" />
     <ClInclude Include="Jump.h" />
-    <ClInclude Include="Luigi.h" />
+    <ClInclude Include="BJGraphics.h" />
     <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

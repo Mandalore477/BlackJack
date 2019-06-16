@@ -15,6 +15,12 @@ FBlackJackGame::FBlackJackGame()
 
 }
 
+FBlackJackGame::FBlackJackGame(SDL_Renderer *renderer, Sprite * background)
+{
+	this->renderer = renderer;
+	this->background = background;
+}
+
 
 
 
@@ -155,6 +161,49 @@ void FBlackJackGame::Deal(Card playerHand[], Card dealerHand[])
 
 void FBlackJackGame::PlayGame()
 {
+	cardSheet = new BJGraphics("Images/CardDeck.png", 320, 365, 81, 117, renderer);
+	playerCard1  = new Sprite("Images/CardDeck.png", 0, 365, 81, 117, renderer);
+	playerCard2	 = new Sprite("Images/CardDeck.png", 10, 320, 81, 117, renderer);
+	playerCard3	 = new Sprite("Images/CardDeck.png", 20, 300, 81, 117, renderer);
+	playerCard4	 = new Sprite("Images/CardDeck.png", 30, 280, 81, 117, renderer);
+	playerCard5	 = new Sprite("Images/CardDeck.png", 40, 240, 81, 117, renderer);
+	splitCard1	 = new Sprite("Images/CardDeck.png", 50, 200, 81, 117, renderer);
+	splitCard2	 = new Sprite("Images/CardDeck.png", 60, 160, 81, 117, renderer);
+	splitCard3	 = new Sprite("Images/CardDeck.png", 70, 120, 81, 117, renderer);
+	splitCard4	 = new Sprite("Images/CardDeck.png", 80, 80, 81, 117, renderer);
+	splitCard5	 = new Sprite("Images/CardDeck.png", 90, 40, 81, 117, renderer);
+	dealerCard1	 = new Sprite("Images/CardDeck.png", 100, 360, 81, 117, renderer);
+	dealerCard2	 = new Sprite("Images/CardDeck.png", 110, 320, 81, 117, renderer);
+	dealerCard3	 = new Sprite("Images/CardDeck.png", 120, 280, 81, 117, renderer);
+	dealerCard4	 = new Sprite("Images/CardDeck.png", 130, 240, 81, 117, renderer);
+	dealerCard5	 = new Sprite("Images/CardDeck.png", 140, 200, 81, 117, renderer);
+	hitButton    = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
+	stayButton 	 = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
+	doDownButton = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
+	surrenButton = new Sprite("Images/CardDeck.png", 320, 365, 81, 117, renderer);
+	
+	playerCard1	->draw();
+	playerCard2	->draw();
+	playerCard3	->draw();
+	playerCard4	->draw();
+	playerCard5	->draw();
+	splitCard1	->draw();
+	splitCard2	->draw();
+	splitCard3	->draw();
+	splitCard4	->draw();
+	splitCard5	->draw();
+	dealerCard1	->draw();
+	dealerCard2	->draw();
+	dealerCard3	->draw();
+	dealerCard4	->draw();
+	dealerCard5	->draw();
+	hitButton	->draw();
+	stayButton	->draw();
+	doDownButton->draw();
+	surrenButton->draw();
+
+	SDL_RenderPresent(renderer);
+
 	quit = false;
 	while (quit == false)
 	{
@@ -249,6 +298,26 @@ void FBlackJackGame::PlayGame()
 			Deck.ShuffleDeck();
 		}
 	} 
+	delete playerCard1;
+	delete playerCard2;
+	delete playerCard3;
+	delete playerCard4;
+	delete playerCard5;
+	delete splitCard1;
+	delete splitCard2;
+	delete splitCard3;
+	delete splitCard4;
+	delete splitCard5;
+	delete dealerCard1;
+	delete dealerCard2;
+	delete dealerCard3;
+	delete dealerCard4;
+	delete dealerCard5;
+	delete cardSheet;
+	delete hitButton;
+	delete stayButton;
+	delete doDownButton;
+	delete surrenButton;
 }
 
 void FBlackJackGame::Results()

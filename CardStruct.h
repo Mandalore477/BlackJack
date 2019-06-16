@@ -1,6 +1,9 @@
 #ifndef CARDStruct
 #define CARDStruct
 #include<string>
+#include"Definitions.h"
+#include"Sprite.h"
+#include"BJGraphics.h"
 
 using FString = std::string;
 using int32 = int;
