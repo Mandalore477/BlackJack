@@ -35,7 +35,10 @@ int main(int argc, char** argv)
 	/** Initialize sprite variables */
 	Sprite *background = nullptr;
 
-
+	/** Initialize music and sound effect variables */
+	Mix_Music *music = nullptr;
+	Mix_Chunk *dealSnd = nullptr;
+	Mix_Chunk *shuffleSnd = nullptr;
 	
 
 	/** Initialize SDL */
@@ -46,6 +49,33 @@ int main(int argc, char** argv)
 	}
 	// Close SDL at program end
 	atexit(SDL_Quit);
+
+	/** Initialize TTF_Font */
+	if (TTF_Init() < 0)
+	{
+		cerr << "TTF_Init Error: " << TTF_GetError() << endl;
+		return 1;
+	}
+	/** Close TTF_Font at program end */
+	atexit(TTF_Quit);
+
+	/** Initialize SDL_Mixer */
+	if (Mix_OpenAudio(AUDIO_RATE, AUDIO_FORMAT, AUDIO_CHANNELS, AUDIO_BUFFERS) < 0)
+	{
+		cerr << "Mix_OpenAudio: " << Mix_GetError() << endl;
+		return 1;
+	}
+	/** Close SDL_Mixer at program end */
+	atexit(Mix_CloseAudio);
+
+	/** Load music sound file */
+	music = Mix_LoadMUS("Sounds/Earthquake.mp3");
+
+	/** Check if audio file was opened */
+	if (!music)
+		cerr << "Mix_LoadMUS: " << Mix_GetError() << endl;
+
+	Mix_PlayMusic(music, -1);
 
 	/** Create Window for Project */
 	window = SDL_CreateWindow("Black Jack Game", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -88,6 +118,11 @@ int main(int argc, char** argv)
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 
+	/** Stop and free music. Free all sound effects */
+	Mix_HaltMusic();
+	Mix_FreeMusic(music);
+	Mix_FreeChunk(dealSnd);
+	Mix_FreeChunk(shuffleSnd);
 
 	return 0;
 }

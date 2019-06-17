@@ -25,7 +25,6 @@ private:
 	int splitValue;
 	int splitBet;
 	bool playBlackJack;
-	char response;
 	
 public:
 	FPlayer();
@@ -33,6 +32,7 @@ public:
 		Sprite *doDownButton,Sprite *surrenButton);
 	~FPlayer();
 
+	char response;
 	Uint32			deltaT = 75;			// defines delay in time for updating game loop
 	Uint32			updatedTime = 0;			// used to determine if frame rate interval has elapsed
 
@@ -77,17 +77,18 @@ public:
 
 	void SetButtonVisible(bool hitButton, bool stayButton, bool doDownButton, bool surrenButton);
 	void DrawScreen();
-	bool ClickHit();
-	bool ClickStay();
-	bool ClickDoDown();
-	bool ClickSurren();
+	void ClickHit();
+	void ClickStay();
+	void ClickDoDown();
+	void ClickSurren();
 
+	void drawText(string text, Uint16 posX, Uint16 posY);
 
 	Card blank;
 	Card hand[5];
 	Card splitHand[5];
 
-
+	SDL_Event event;
 
 };
 

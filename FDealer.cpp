@@ -120,17 +120,10 @@ void FDealer::SetBlackJack(bool blackJackResult)
 
 void FDealer::DrawScreen()
 {
-	//background->draw();
 	for (int i = 0; i < 5; i++)
 	{
-		//playerCards[i]->drawCard();
-		//splitCards[i]->drawCard();
 		dealerCards[i]->drawCard();
 	}
-	//hitButton->drawCard();
-	//stayButton->drawCard();
-	//doDownButton->drawCard();
-	//surrenButton->drawCard();
 
 	SDL_RenderPresent(renderer);
 }
@@ -164,11 +157,14 @@ void FDealer::DisplayDealerPost(Card hand[])
 		if (hand[i].value == 0)
 		{
 			std::cout << std::endl;
+			dealerCards[i]->setVisible(false);
 		}
 		else
 		{
 			std::cout << "//*" << hand[i].face << " " << hand[i].suit << "*\\\\" << std::endl;
+			dealerCards[i]->setVisible(true);
 		}
 	}
 	std::cout << "Dealer hand value :" << CalculateValue(hand)<<"\n" << std::endl;
+	DrawScreen();
 }

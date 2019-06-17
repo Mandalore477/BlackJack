@@ -65,9 +65,8 @@ public:
 	bool GetQuit();
 	void PrintIntro();
 	void Smiley();
-
-	void drawText(string text, Uint16 posX, Uint16 posY);
 	
+	SDL_Event event;
 	
 	int numberOfPlayers;
 };

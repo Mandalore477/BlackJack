@@ -18,10 +18,6 @@ FBlackJackGame::FBlackJackGame(SDL_Renderer *renderer, Sprite * background)
 {
 	this->renderer = renderer;
 	this->background = background;
-	FPlayer PlayerFull(deltaT, updatedTime, renderer,background,playerCards,dealerCards,splitCards,hitButton,stayButton,doDownButton,surrenButton );
-	Player = PlayerFull;
-	FDealer DealerFull(renderer,dealerCards);
-	Dealer = DealerFull;
 }
 
 
@@ -76,22 +72,19 @@ void FBlackJackGame::ResetCurCard()
 
 void FBlackJackGame::Insurance()
 {
-	char response=' ';
+	Player.response=' ';
 
 	if (Player.GetBet() / 2 < Player.GetChips())
 	{
-		while (response != 'y' && response != 'n')
+		while (Player.response != 'a' && Player.response != 's')
 		{
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			while (std::cout << "Would you like to purchase insurance (Y/N)" && !(std::cin >> response))
+			if (SDL_GetTicks() - updatedTime >= deltaT)
 			{
-				std::cin.clear(); //clear bad input flag
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-				std::cout << "Invalid input; please re-enter.\n";
+				DrawScreen();
+				Player.drawText("Would you like to purchase insurance. hit for yes. stay for no.", 180, 150);
 			}
-			response = tolower(response);
 		}
-		if (response == 'y')
+		if (Player.response == 'a')
 		{
 			Player.ReBet();
 			Player.GetWinnings(Player.GetBet() / 2);
@@ -104,14 +97,14 @@ void FBlackJackGame::Insurance()
 		if (dealerHand[1].value == 10)
 		{
 			system("cls");
-			if (response == 'y')
+			if (Player.response == 'a')
 			{
 				std::cout << "You pay Insurance bet : " << Player.GetBet() / 2 << " Chips" << std::endl;
 			}
 			Player.DisplayPlayer(playerHand);
 			Dealer.DisplayDealerPost(dealerHand);
 			std::cout << "Dealer has BlackJack"<<std::endl;
-			if (response == 'y')
+			if (Player.response == 'a')
 			{
 				std::cout << "You get insurance payout for : " << Player.GetBet() << " Chips" << std::endl;
 				Player.GetWinnings(Player.GetBet());
@@ -125,7 +118,7 @@ void FBlackJackGame::Insurance()
 		else
 		{
 			system("cls");
-			if (response == 'y')
+			if (Player.response == 'a')
 			{
 				std::cout << "You pay Insurance bet : " << Player.GetBet() / 2 << " Chips" << std::endl;
 			}
@@ -175,8 +168,17 @@ void FBlackJackGame::Deal(Card playerHand[], Card dealerHand[])
 	for (int32 i = 0; i < 2; i++)
 	{
 		playerHand[i] = *(Deck.getDeckPtr() + GetCurrentCard());
+		playerCards[i]->setRow(playerHand[i].row);
+		playerCards[i]->setCurrentFrame(playerHand[i].frame);
+		playerCards[i]->setVisible(true);
 		SetCurrentCard();
 		dealerHand[i] = *(Deck.getDeckPtr() + GetCurrentCard());
+		dealerCards[i]->setRow(dealerHand[i].row);
+		dealerCards[i]->setCurrentFrame(dealerHand[i].frame);
+		if (1==i)
+			dealerCards[i]->setVisible(false);
+		else 
+			dealerCards[i]->setVisible(true);
 		SetCurrentCard();
 		//std::cout << "Player card " << playerHand[i].face << " " << playerHand[i].suit << std::endl;
 		//std::cout << "Dealer card " << dealerHand[i].face << " " << dealerHand[i].suit << std::endl;
@@ -208,86 +210,113 @@ void FBlackJackGame::PlayGame()
 	surrenButton->setRow(9);
 	surrenButton->setCurrentFrame(4);
 	
+	Player.renderer = renderer;
+	Dealer.renderer = renderer;
+	Player.background = background;
+	Player.deltaT = deltaT;
+	for (int i = 0; i < 5; i++)
+	{
+		Player.playerCards[i] = playerCards[i];
+		Player.dealerCards[i] = dealerCards[i];
+		Player.splitCards[i] = splitCards[i];
+		Dealer.dealerCards[i] = dealerCards[i];
+	}
+	Player.hitButton = hitButton;
+	Player.stayButton = stayButton;
+	Player.doDownButton = doDownButton;
+	Player.surrenButton = surrenButton;
+	Player.event = event;
 
 	quit = false;
 	while (quit == false)
 	{
 		if (SDL_GetTicks() - updatedTime >= deltaT)
 		{
-	DrawScreen();
+			DrawScreen();
 			srand(time(NULL));
 			int seperatorCard = ((rand() % 100) + 150);
 			while (GetCurrentCard() < seperatorCard && !GetIsPlay() && quit == false)
 			{
-				ResetHands(playerHand, dealerHand, playSplitHand);
-				Player.DisplayPlayerPre();
-				Player.MakeBet();
-				system("cls");
-
-				Deal(playerHand, dealerHand);
-				if (Dealer.CheckInsurance(dealerHand))
+				if (SDL_GetTicks() - updatedTime >= deltaT)
 				{
-					Insurance();
-				}
-				if (!Dealer.IsBlackJack())
-				{
+					SDL_PollEvent(&event);
+					ResetHands(playerHand, dealerHand, playSplitHand);
+					DrawScreen();
+					Player.DisplayPlayerPre();
+					Player.MakeBet();
+					system("cls");
 
-					if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
+					Deal(playerHand, dealerHand);
+					DrawScreen();
+					if (Dealer.CheckInsurance(dealerHand))
 					{
-						if (playerHand[0].value == 1) { playerHand[0].value = 11; }
-						playSplitHand[0] = playerHand[1];
-						AddCurrentCard();
-						playSplitHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
-						AddCurrentCard();
-						playerHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
-						system("cls");
-						Player.DisplaySplit(playerHand, playSplitHand);
-						Dealer.DisplayDealerPre(dealerHand);
-						while (!Player.GetStay())
+						Insurance();
+					}
+					if (!Dealer.IsBlackJack())
+					{
+
+						if (Player.IsSplit(playerHand, Player.GetChips(), Player.GetBet()))
 						{
-							Player.SplitPlay(playerHand, playSplitHand, Deck.getDeckPtr(), GetCurrentCard());
-							system("cls");
+							if (playerHand[0].value == 1) { playerHand[0].value = 11; }
+							playSplitHand[0] = playerHand[1];
 							AddCurrentCard();
+							playSplitHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
+							AddCurrentCard();
+							playerHand[1] = *(Deck.getDeckPtr() + (GetCurrentCard()));
+							system("cls");
 							Player.DisplaySplit(playerHand, playSplitHand);
 							Dealer.DisplayDealerPre(dealerHand);
+							while (!Player.GetStay())
+							{
+								if (SDL_GetTicks() - updatedTime >= deltaT)
+								{
+									Player.SplitPlay(playerHand, playSplitHand, Deck.getDeckPtr(), GetCurrentCard());
+									system("cls");
+									AddCurrentCard();
+									Player.DisplaySplit(playerHand, playSplitHand);
+									Dealer.DisplayDealerPre(dealerHand);
+									DrawScreen();
+								}
+							}
 						}
+						else
+						{
+							while (!Player.GetStay())
+							{
+								if (SDL_GetTicks() - updatedTime >= deltaT)
+								{
+									Player.Play(playerHand, Deck.getDeckPtr(), GetCurrentCard());
+									system("cls");
+									AddCurrentCard();
+									Player.DisplayPlayer(playerHand);
+									Dealer.DisplayDealerPre(dealerHand);
+									DrawScreen();
+								}
+							}
+						}
+						Results();
+					}
+					Player.response = ' ';
+					if (Player.GetChips() <= 0)
+					{
+						quit = true;
+						system("pause");
 					}
 					else
 					{
-						while (!Player.GetStay())
+						while (Player.response != 'd' && Player.response != 'f' )
 						{
-							Player.Play(playerHand, Deck.getDeckPtr(), GetCurrentCard());
-							system("cls");
-							AddCurrentCard();
-							Player.DisplayPlayer(playerHand);
-							Dealer.DisplayDealerPre(dealerHand);
+							if (SDL_GetTicks() - updatedTime >= deltaT)
+							{
+								if (Player.response == 'f')
+								{
+									quit = true;
+								}
+								else { quit = false; }
+								DrawScreen();
+								Player.drawText("Would you like to keep playing? DoubleDown for yes. Surrender for no.", 180, 150);
+							}
 						}
-					}
-					Results();
-				}
-				char response = ' ';
-				if (Player.GetChips() <= 0)
-				{
-					quit = true;
-					system("pause");
-				}
-				else
-				{
-					while (response != 'y' && response != 'n')
-					{
-						std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-						while (std::cout << "Would you like to continue playing (Y/N)" && !(std::cin >> response))
-						{
-							std::cin.clear(); //clear bad input flag
-							std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //discard input
-							std::cout << "Invalid input; please re-enter.\n";
-						}
-						response = tolower(response);
-						if (response == 'n')
-						{
-							quit = true;
-						}
-						else { quit = false; }
 					}
 				}
 			}
@@ -324,6 +353,7 @@ void FBlackJackGame::PlayGame()
 	delete doDownButton;
 	delete surrenButton;
 
+	
 	
 }
 
@@ -419,19 +449,22 @@ void FBlackJackGame::DealerPlay()
 {
 	while (!Dealer.GetStay())
 	{
-		Dealer.Hit(dealerHand, deck, GetCurrentCard());
-		system("cls");
-		AddCurrentCard();
-		if (playSplitHand[0].value > 0)
+		if (SDL_GetTicks() - updatedTime >= deltaT)
 		{
-			Player.DisplaySplit(playerHand, playSplitHand);
+			Dealer.Hit(dealerHand, deck, GetCurrentCard());
+			system("cls");
+			AddCurrentCard();
+			if (playSplitHand[0].value > 0)
+			{
+				Player.DisplaySplit(playerHand, playSplitHand);
+			}
+			else
+			{
+				Player.DisplayPlayer(playerHand);
+			}
+			Dealer.DisplayDealerPost(dealerHand);
+			DrawScreen();
 		}
-		else
-		{
-			Player.DisplayPlayer(playerHand);
-		}
-		Dealer.DisplayDealerPost(dealerHand);
-
 	}
 }
 
@@ -498,6 +531,7 @@ void FBlackJackGame::PrintIntro()
 	std::cout << "	Split hands cannot get blackjack. " << std::endl;
 	std::cout << "	If you and the dealer have hands of equal value it is a push and you keep your bet." << std::endl;
 
+	Player.drawText("	Welcome to Blackjack", 100, 100);
 
 	system("pause");
 	system("cls");
@@ -528,30 +562,6 @@ void FBlackJackGame::Smiley()
 	std::cout << "                    ''ooooooooo''" << std::endl;
 }
 
-void FBlackJackGame::drawText(string text, Uint16 posX, Uint16 posY)
-{
-	const char* textChar = text.c_str();
-	TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 24); //this opens a font style and sets a size
 
-	SDL_Color White = { 255, 255, 255 };  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
-
-	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, textChar, White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
-
-	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); //now you can convert it into a texture
-
-	SDL_Rect Message_rect; //create a rect
-	Message_rect.x = posX;  //controls the rect's x coordinate 
-	Message_rect.y = posY; // controls the rect's y coordinte
-	Message_rect.w = 100; // controls the width of the rect
-	Message_rect.h = 30; // controls the height of the rect
-
-	//Mind you that (0,0) is on the top left of the window/screen, think a rect as the text's box, that way it would be very simple to understance
-
-	//Now since it's a texture, you have to put RenderCopy in your game loop area, the area where the whole code executes
-
-	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); //you put the renderer's name first, the Message, the crop size(you can ignore this if you don't want to dabble with cropping), and the rect which is the size and coordinate of your texture
-
-	//Don't forget too free your surface and texture
-}
 
 

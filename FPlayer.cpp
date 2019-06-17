@@ -37,6 +37,36 @@ FPlayer::~FPlayer()
 
 void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 {
+
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
+		{
+			/** Check if user tries to quit the window */
+		case SDL_QUIT:
+			exit(1);		// Break out of loop to end game
+			break;
+
+			/**	Check if a key was pressed */
+		case SDL_MOUSEBUTTONDOWN:
+			if (hitButton->isVisible() && (event.button.x <= hitButton->getXPos())
+				&& (event.button.x >= hitButton->getXPos() + hitButton->getWidth()) && (event.button.y <= hitButton->getYPos())
+				&& (event.button.y >= hitButton->getYPos() + hitButton->getHeight()))
+				ClickHit();
+			else if (stayButton->isVisible() && event.button.x <= stayButton->getXPos()
+				&& event.button.x >= stayButton->getXPos() + stayButton->getWidth() && event.button.y <= stayButton->getYPos()
+				&& event.button.y >= stayButton->getYPos() + stayButton->getHeight())
+				ClickStay();
+			else if (doDownButton->isVisible() && event.button.x <= doDownButton->getXPos()
+				&& event.button.x >= doDownButton->getXPos() + doDownButton->getWidth() && event.button.y <= doDownButton->getYPos()
+				&& event.button.y >= doDownButton->getYPos() + doDownButton->getHeight())
+				ClickDoDown();
+			else if (surrenButton->isVisible() && event.button.x <= surrenButton->getXPos()
+				&& event.button.x >= surrenButton->getXPos() + surrenButton->getWidth() && event.button.y <= surrenButton->getYPos()
+				&& event.button.y >= surrenButton->getYPos() + surrenButton->getHeight())
+				ClickSurren();
+		}
+	}
 	cardInHand = GetCardInHand(hand);
 	bust = false;
 	handTotal = CalculateValue(hand);
@@ -78,11 +108,15 @@ void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 		}
 		else
 		{
+			response = ' ';
 			SetButtonVisible(true, true, false, false);
-			do
-			{
-				DrawScreen();
-			} while (!ClickHit() && !ClickStay());
+			do{
+			
+				if (SDL_GetTicks() - updatedTime >= deltaT)
+				{
+					DrawScreen();
+				}
+			} while (response!='a' && response!='s');
 			if (response == 'a')
 			{
 				Hit(hand, deckPtr, currentCard, cardInHand);
@@ -145,11 +179,15 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 			}
 			else
 			{
+				response = ' ';
 				SetButtonVisible(true, true, false, false);
 				do
 				{
-					DrawScreen();
-				} while (!ClickHit() && !ClickStay());
+					if (SDL_GetTicks() - updatedTime >= deltaT)
+					{
+						DrawScreen();
+					}
+				} while (response != 'a' && response != 's');
 				if (response == 'a')
 				{
 					SplitHit(splitHand, deckPtr, currentCard,splitCardInHand);
@@ -210,10 +248,14 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 			}
 			else
 			{
+				response = ' ';
 				SetButtonVisible(true, true, false, false);
 				do{
-					DrawScreen();
-				} while (!ClickHit() && !ClickStay());
+					if (SDL_GetTicks() - updatedTime >= deltaT)
+					{
+						DrawScreen();
+					}
+				} while (response != 'a' && response != 's');
 				if (response == 'a')
 				{
 					Hit(hand, deckPtr, currentCard, cardInHand);
@@ -269,14 +311,21 @@ void FPlayer::MakeBet()
 {
 	while (bet > chips || bet < 1)
 	{
-		std::cin.clear();
-		while (std::cout << "Bet ammount :" && !(std::cin >> bet))
+		if (SDL_GetTicks() - updatedTime >= deltaT)
 		{
-			std::cin.clear(); //clear bad input flag
-			std::cin.ignore(std::numeric_limits<int>::max(), '\n'); //discard input
-			std::cout << "Invalid input; please re-enter.\n";
+			std::cin.clear();
+			while (std::cout << "Bet ammount :" && !(std::cin >> bet))
+			{
+				if (SDL_GetTicks() - updatedTime >= deltaT)
+				{
+					std::cin.clear(); //clear bad input flag
+					std::cin.ignore(std::numeric_limits<int>::max(), '\n'); //discard input
+					std::cout << "Invalid input; please re-enter.\n";
+					DrawScreen();
+				}
+			}
+			DrawScreen();
 		}
-		/*std::getline (std::istream, bet);*/
 	}
 	chips -= bet;
 }
@@ -353,9 +402,12 @@ bool FPlayer::IsSplit(Card hand[],int chips, int bet)
 		if (bet <= chips)
 		{
 			SetButtonVisible(true, true, false, false);
-			while (!ClickHit() && !ClickStay())
+			while (response != 'a' && response != 's')
 			{
-				DrawScreen();
+				if (SDL_GetTicks() - updatedTime >= deltaT)
+				{
+					DrawScreen();
+				}
 			}
 			if (response == 'a')
 			{
@@ -470,8 +522,11 @@ void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardI
 		SetButtonVisible(true, true, false, true);
 		do
 		{
-			DrawScreen();
-		} while (!ClickHit() && !ClickStay() && !ClickSurren());
+			if (SDL_GetTicks() - updatedTime >= deltaT)
+			{
+				DrawScreen();
+			}
+		} while (response != 'a' && response != 's' && response != 'f');
 		if (response == 'a')
 		{
 			Hit(hand, deckPtr, currentCard, cardInHand);
@@ -495,8 +550,11 @@ void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardI
 		SetButtonVisible(true, true, true, true);
 		do
 		{
-			DrawScreen();
-		} while (!ClickHit() && !ClickStay() && !ClickDoDown() && !ClickSurren());
+			if (SDL_GetTicks() - updatedTime >= deltaT)
+			{
+				DrawScreen();
+			}
+		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
 		if (response == 'd')
 		{
 			Hit(hand, deckPtr, currentCard, cardInHand);
@@ -538,8 +596,11 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCar
 		SetButtonVisible(true, true, false, false);
 		do
 		{
-			DrawScreen();
-		} while (!ClickHit() && !ClickStay() );
+			if (SDL_GetTicks() - updatedTime >= deltaT)
+			{
+				DrawScreen();
+			}
+		} while (response != 'a' && response != 's' );
 		if (response == 'a')
 		{
 			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
@@ -556,8 +617,11 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCar
 		SetButtonVisible(true, true, true, false);
 		do
 		{
-			DrawScreen();
-		} while (!ClickHit() && !ClickStay() && !ClickDoDown());
+			if (SDL_GetTicks() - updatedTime >= deltaT)
+			{
+				DrawScreen();
+			}
+		} while (response != 'a' && response != 's' && response != 'd');
 		
 		doDownButton->setVisible(false);
 		
@@ -627,78 +691,53 @@ void FPlayer::DrawScreen()
 	SDL_RenderPresent(renderer);
 }
 
-bool FPlayer::ClickHit()
+void FPlayer::ClickHit()
 {
-	/** Directly read from Keyboard */
-	const Uint8*keys = SDL_GetKeyboardState(nullptr);
-	SDL_Rect mouseClick;
-	if (SDL_SCANCODE_A ||
-		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= hitButton->getXPos()
-		&& mouseClick.x >= hitButton->getXPos() + hitButton->getWidth() && mouseClick.y <= hitButton->getYPos()
-		&& mouseClick.y >= hitButton->getYPos() + hitButton->getHeight()))
-	{
 		response = 'a';
-		return true;
-	}
-	else
-		return false;
 }
 
-bool FPlayer::ClickStay()
+void FPlayer::ClickStay()
 {
-	/** Directly read from Keyboard */
-	const Uint8*keys = SDL_GetKeyboardState(nullptr);
-
-	SDL_Rect mouseClick;
-	if (SDL_SCANCODE_S ||
-		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= stayButton->getXPos()
-		&& mouseClick.x >= stayButton->getXPos() + stayButton->getWidth() && mouseClick.y <= stayButton->getYPos()
-		&& mouseClick.y >= stayButton->getYPos() + stayButton->getHeight()))
-	{
 		response = 's';
-		return true;
-	}
-	else
-		return false;
 }
 
-bool FPlayer::ClickDoDown()
+void FPlayer::ClickDoDown()
 {
-	/** Directly read from Keyboard */
-	const Uint8*keys = SDL_GetKeyboardState(nullptr);
-
-	SDL_Rect mouseClick;
-	if (SDL_SCANCODE_D ||
-		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= doDownButton->getXPos()
-		&& mouseClick.x >= doDownButton->getXPos() + doDownButton->getWidth() && mouseClick.y <= doDownButton->getYPos()
-		&& mouseClick.y >= doDownButton->getYPos() + doDownButton->getHeight()))
-	{
 		response = 'd';
-		return true;
-	}
-	else
-		return false;
 }
 
-bool FPlayer::ClickSurren()
+void FPlayer::ClickSurren()
 {
-	/** Directly read from Keyboard */
-	const Uint8*keys = SDL_GetKeyboardState(nullptr);
-
-	SDL_Rect mouseClick;
-	if (SDL_SCANCODE_F ||
-		((SDL_GetMouseState(&mouseClick.x, &mouseClick.y) == SDL_PRESSED) && mouseClick.x <= surrenButton->getXPos()
-		&& mouseClick.x >= surrenButton->getXPos() + surrenButton->getWidth() && mouseClick.y <= surrenButton->getYPos()
-		&& mouseClick.y >= surrenButton->getYPos() + surrenButton->getHeight()))
-	{
 		response = 'f';
-		return true;
-	}
-	else
-		return false;
 }
 
+void FPlayer::drawText(string inputText, Uint16 posX, Uint16 posY)
+{
+	const char* textChar = inputText.c_str();
+	TTF_Font* Sans = TTF_OpenFont("Fonts/DroidSansMono.ttf", 24); //this opens a font style and sets a size
 
+	SDL_Color White = { 255, 255, 255 };  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
+
+	SDL_Surface* surfaceMessage = TTF_RenderText_Blended(Sans, textChar, White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); //now you can convert it into a texture
+
+	SDL_Rect Message_rect; //create a rect
+	Message_rect.x = posX;  //controls the rect's x coordinate 
+	Message_rect.y = posY; // controls the rect's y coordinte
+	Message_rect.w = surfaceMessage->w; // controls the width of the rect
+	Message_rect.h = surfaceMessage->h; // controls the height of the rect
+
+	//Mind you that (0,0) is on the top left of the window/screen, think a rect as the text's box, that way it would be very simple to understance
+
+	//Now since it's a texture, you have to put RenderCopy in your game loop area, the area where the whole code executes
+
+	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); //you put the renderer's name first, the Message, the crop size(you can ignore this if you don't want to dabble with cropping), and the rect which is the size and coordinate of your texture
+
+	//Don't forget too free your surface and texture
+	SDL_DestroyTexture(Message);
+	SDL_FreeSurface(surfaceMessage);
+}
 
 
 
