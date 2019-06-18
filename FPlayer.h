@@ -28,8 +28,6 @@ private:
 	
 public:
 	FPlayer();
-	FPlayer(Uint32 deltaT, Uint32 updatedTime, SDL_Renderer *renderer,Sprite *background, Sprite *playerCards[5], Sprite *dealerCards[5], Sprite *splitCards[5], Sprite *hitButton, Sprite *stayButton,
-		Sprite *doDownButton,Sprite *surrenButton);
 	~FPlayer();
 
 	char response;
@@ -46,6 +44,8 @@ public:
 	Sprite *stayButton = nullptr;
 	Sprite *doDownButton = nullptr;
 	Sprite *surrenButton = nullptr;
+	Sprite *bet100 = nullptr;
+	Sprite *bet1000 = nullptr;
 	SDL_Renderer *renderer = NULL;
 	
 	void Play(Card hand[], Card *deckPtr,int currentCard);

@@ -26,6 +26,7 @@ FBlackJackGame::FBlackJackGame(SDL_Renderer *renderer, Sprite * background)
 void FBlackJackGame::DrawScreen()
 {
 	background->draw();
+	cardSheet->drawCard();
 	for (int i = 0; i < 5; i++)
 	{
 		playerCards[i]->drawCard();
@@ -76,7 +77,7 @@ void FBlackJackGame::Insurance()
 
 	if (Player.GetBet() / 2 < Player.GetChips())
 	{
-		while (Player.response != 'a' && Player.response != 's')
+		if (Player.response != 'a' && Player.response != 's')
 		{
 			if (SDL_GetTicks() - updatedTime >= deltaT)
 			{
@@ -175,8 +176,11 @@ void FBlackJackGame::Deal(Card playerHand[], Card dealerHand[])
 		dealerHand[i] = *(Deck.getDeckPtr() + GetCurrentCard());
 		dealerCards[i]->setRow(dealerHand[i].row);
 		dealerCards[i]->setCurrentFrame(dealerHand[i].frame);
-		if (1==i)
+		if (1 == 0)
+		{	
 			dealerCards[i]->setVisible(false);
+			cardSheet->setVisible(true);
+		}
 		else 
 			dealerCards[i]->setVisible(true);
 		SetCurrentCard();
@@ -196,7 +200,7 @@ void FBlackJackGame::PlayGame()
 		splitCards[i] = new Sprite("Images/CardDeck.png", 200 + i*10, 320 - i*15, 81, 117, renderer);
 		dealerCards[i] = new Sprite("Images/CardDeck.png", 300 + i*10, 150, 81, 117, renderer);
 	}
-
+	cardSheet = new BJGraphics("Images/CardDeck.png", 300, 150, 81, 117, renderer);
 	hitButton    = new Sprite("Images/CardDeck.png", 50,  400, 81 * 2, 117 / 2+1, renderer);
 	hitButton->setRow(8);								  
 	hitButton->setCurrentFrame(3);						  
@@ -209,6 +213,12 @@ void FBlackJackGame::PlayGame()
 	surrenButton = new Sprite("Images/CardDeck.png", 350, 400, 81 * 2, 117 / 2+1, renderer);
 	surrenButton->setRow(9);
 	surrenButton->setCurrentFrame(4);
+	bet100 = new Sprite("Images/CardDeck.png", 500, 250, 81 * 2, 117 / 2 + 1, renderer);
+	bet100->setCurrentFrame(5);
+	bet100->setRow(8);
+	bet1000 = new Sprite("Images/CardDeck.png", 500, 320, 81 * 2, 117 / 2 + 1, renderer);
+	bet1000->setCurrentFrame(5);
+	bet1000->setRow(9);
 	
 	Player.renderer = renderer;
 	Dealer.renderer = renderer;
@@ -221,10 +231,14 @@ void FBlackJackGame::PlayGame()
 		Player.splitCards[i] = splitCards[i];
 		Dealer.dealerCards[i] = dealerCards[i];
 	}
+	Player.cardSheet = cardSheet;
+	Dealer.cardSheet = cardSheet;
 	Player.hitButton = hitButton;
 	Player.stayButton = stayButton;
 	Player.doDownButton = doDownButton;
 	Player.surrenButton = surrenButton;
+	Player.bet100 = bet100;
+	Player.bet1000 = bet1000;
 	Player.event = event;
 
 	quit = false;
@@ -240,6 +254,38 @@ void FBlackJackGame::PlayGame()
 				if (SDL_GetTicks() - updatedTime >= deltaT)
 				{
 					SDL_PollEvent(&event);
+					while (SDL_PollEvent(&event))
+					{
+						switch (event.type)
+						{
+							/** Check if user tries to quit the window */
+						case SDL_QUIT:
+							exit(1);		// Break out of loop to end game
+							break;
+
+							/**	Check if a key was pressed */
+						case SDL_MOUSEBUTTONDOWN:
+							cout << "game before if";
+							if (hitButton->isVisible() && (event.button.x <= hitButton->getXPos())
+								&& (event.button.x >= hitButton->getXPos() + hitButton->getWidth()) && (event.button.y <= hitButton->getYPos())
+								&& (event.button.y >= hitButton->getYPos() + hitButton->getHeight()))
+								Player.ClickHit();
+							else if (stayButton->isVisible() && event.button.x <= stayButton->getXPos()
+								&& event.button.x >= stayButton->getXPos() + stayButton->getWidth() && event.button.y <= stayButton->getYPos()
+								&& event.button.y >= stayButton->getYPos() + stayButton->getHeight())
+								Player.ClickStay();
+							else if (doDownButton->isVisible() && event.button.x <= doDownButton->getXPos()
+								&& event.button.x >= doDownButton->getXPos() + doDownButton->getWidth() && event.button.y <= doDownButton->getYPos()
+								&& event.button.y >= doDownButton->getYPos() + doDownButton->getHeight())
+								Player.ClickDoDown();
+							else if (surrenButton->isVisible() && event.button.x <= surrenButton->getXPos()
+								&& event.button.x >= surrenButton->getXPos() + surrenButton->getWidth() && event.button.y <= surrenButton->getYPos()
+								&& event.button.y >= surrenButton->getYPos() + surrenButton->getHeight())
+								Player.ClickSurren();
+							cout << "game after if";
+							break;
+						}
+					}
 					ResetHands(playerHand, dealerHand, playSplitHand);
 					DrawScreen();
 					Player.DisplayPlayerPre();
@@ -281,7 +327,7 @@ void FBlackJackGame::PlayGame()
 						}
 						else
 						{
-							while (!Player.GetStay())
+							if (!Player.GetStay())
 							{
 								if (SDL_GetTicks() - updatedTime >= deltaT)
 								{
@@ -304,7 +350,7 @@ void FBlackJackGame::PlayGame()
 					}
 					else
 					{
-						while (Player.response != 'd' && Player.response != 'f' )
+						if (Player.response != 'd' && Player.response != 'f' )
 						{
 							if (SDL_GetTicks() - updatedTime >= deltaT)
 							{
@@ -447,7 +493,7 @@ void FBlackJackGame::Results()
 
 void FBlackJackGame::DealerPlay()
 {
-	while (!Dealer.GetStay())
+	if (!Dealer.GetStay())
 	{
 		if (SDL_GetTicks() - updatedTime >= deltaT)
 		{
@@ -531,9 +577,17 @@ void FBlackJackGame::PrintIntro()
 	std::cout << "	Split hands cannot get blackjack. " << std::endl;
 	std::cout << "	If you and the dealer have hands of equal value it is a push and you keep your bet." << std::endl;
 
-	Player.drawText("	Welcome to Blackjack", 100, 100);
-
-	system("pause");
+	//Player.response = ' ';
+	//hitButton->setVisible(true);
+	//while (Player.response != 'a')
+	//{
+	//	if (SDL_GetTicks() - updatedTime >= deltaT)
+	//	{
+	//		Player.drawText("	Welcome to Blackjack", 100, 100);
+	//		DrawScreen();
+	//	}
+	//}
+	//system("pause");
 	system("cls");
 
 }

@@ -1,3 +1,6 @@
 ﻿  FBlackJackGame.cpp
-d:\tfs-projects\term 2(april-june 2019)\vgp122 programming fundamentals\blackjack\fblackjackgame.cpp(236): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\tfs-projects\term 2(april-june 2019)\vgp122 programming fundamentals\blackjack\fblackjackgame.cpp(250): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  FPlayer.cpp
+d:\tfs-projects\term 2(april-june 2019)\vgp122 programming fundamentals\blackjack\fplayer.cpp(521): warning C4390: ';': empty controlled statement found; is this the intent?
+  Generating Code...
   BlackJack.vcxproj -> D:\TFS-Projects\Term 2(April-June 2019)\VGP122 Programming Fundamentals\BlackJack\Debug\BlackJack.exe

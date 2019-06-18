@@ -81,7 +81,7 @@ void FDealer::SetCardInHand(int value)
 
 bool FDealer::CheckInsurance(Card hand[])
 {
-	if (hand[0].value == 11)
+	if (hand[1].value == 11)
 	{
 		return true;
 	}
@@ -120,6 +120,7 @@ void FDealer::SetBlackJack(bool blackJackResult)
 
 void FDealer::DrawScreen()
 {
+	cardSheet->setVisible(false);
 	for (int i = 0; i < 5; i++)
 	{
 		dealerCards[i]->drawCard();

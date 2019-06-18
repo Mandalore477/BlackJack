@@ -11,25 +11,6 @@ FPlayer::FPlayer()
 {
 }
 
-FPlayer::FPlayer(Uint32 deltaT, Uint32 updatedTime, SDL_Renderer * renderer,Sprite *background, Sprite *playerCards[5], Sprite *dealerCards[5], Sprite *splitCards[5], Sprite * hitButton, Sprite * stayButton, Sprite * doDownButton, Sprite * surrenButton)
-{
-	this->deltaT = deltaT;
-	this->updatedTime = updatedTime;
-	this->renderer = renderer;
-	this->background = background;
-	for (int i = 0; i < 5; i++)
-	{
-		this->playerCards[i] = playerCards[i];
-		this->dealerCards[i] = dealerCards[i];
-		this->splitCards[i] = splitCards[i];
-	}
-	this->hitButton = hitButton;
-	this->stayButton = stayButton;
-	this->doDownButton = doDownButton;
-	this->surrenButton = surrenButton;
-
-}
-
 
 FPlayer::~FPlayer()
 {
@@ -37,101 +18,115 @@ FPlayer::~FPlayer()
 
 void FPlayer::Play(Card hand[], Card *deckPtr, int currentCard)
 {
-
-	while (SDL_PollEvent(&event))
+	if (SDL_GetTicks() - updatedTime >= deltaT)
 	{
-		switch (event.type)
+		while (SDL_PollEvent(&event))
 		{
-			/** Check if user tries to quit the window */
-		case SDL_QUIT:
-			exit(1);		// Break out of loop to end game
-			break;
-
-			/**	Check if a key was pressed */
-		case SDL_MOUSEBUTTONDOWN:
-			if (hitButton->isVisible() && (event.button.x <= hitButton->getXPos())
-				&& (event.button.x >= hitButton->getXPos() + hitButton->getWidth()) && (event.button.y <= hitButton->getYPos())
-				&& (event.button.y >= hitButton->getYPos() + hitButton->getHeight()))
-				ClickHit();
-			else if (stayButton->isVisible() && event.button.x <= stayButton->getXPos()
-				&& event.button.x >= stayButton->getXPos() + stayButton->getWidth() && event.button.y <= stayButton->getYPos()
-				&& event.button.y >= stayButton->getYPos() + stayButton->getHeight())
-				ClickStay();
-			else if (doDownButton->isVisible() && event.button.x <= doDownButton->getXPos()
-				&& event.button.x >= doDownButton->getXPos() + doDownButton->getWidth() && event.button.y <= doDownButton->getYPos()
-				&& event.button.y >= doDownButton->getYPos() + doDownButton->getHeight())
-				ClickDoDown();
-			else if (surrenButton->isVisible() && event.button.x <= surrenButton->getXPos()
-				&& event.button.x >= surrenButton->getXPos() + surrenButton->getWidth() && event.button.y <= surrenButton->getYPos()
-				&& event.button.y >= surrenButton->getYPos() + surrenButton->getHeight())
-				ClickSurren();
-		}
-	}
-	cardInHand = GetCardInHand(hand);
-	bust = false;
-	handTotal = CalculateValue(hand);
-	if (cardInHand == 2)
-	{
-		if (handTotal == 21)
-		{
-			stay = true;
-			std::cout << "Player Gets BlackJack!!" << std::endl;
-			playBlackJack = true;
-		}
-		else
-		{
-			DoubleDownOpt(hand, deckPtr, currentCard, cardInHand);
-		}
-		DrawScreen();
-	}
-	else
-	{
-		if (handTotal == 21)
-		{
-			stay = true;
-			std::cout << "You got 21" << std::endl;
-		}
-		else if (handTotal > 21)
-		{
-			stay = true;
-			bust = true;
-			std::cout << "Player bust" << std::endl;
-		}
-		else if (cardInHand == 5)
-		{
-			stay = true;
-			if (handTotal > 21)
+			switch (event.type)
 			{
-				bust = true;
-				std::cout << "Player bust" << std::endl;
+				/** Check if user tries to quit the window */
+			case SDL_QUIT:
+				exit(1);		// Break out of loop to end game
+				break;
+
+				/**	Check if a key was pressed */
+			case SDL_MOUSEBUTTONDOWN:
+				cout << "before if";
+				if (hitButton->isVisible() && (event.button.x <= hitButton->getXPos())
+					&& (event.button.x >= hitButton->getXPos() + hitButton->getWidth()) && (event.button.y <= hitButton->getYPos())
+					&& (event.button.y >= hitButton->getYPos() + hitButton->getHeight()))
+					ClickHit();
+				else if (stayButton->isVisible() && event.button.x <= stayButton->getXPos()
+					&& event.button.x >= stayButton->getXPos() + stayButton->getWidth() && event.button.y <= stayButton->getYPos()
+					&& event.button.y >= stayButton->getYPos() + stayButton->getHeight())
+					ClickStay();
+				else if (doDownButton->isVisible() && event.button.x <= doDownButton->getXPos()
+					&& event.button.x >= doDownButton->getXPos() + doDownButton->getWidth() && event.button.y <= doDownButton->getYPos()
+					&& event.button.y >= doDownButton->getYPos() + doDownButton->getHeight())
+					ClickDoDown();
+				else if (surrenButton->isVisible() && event.button.x <= surrenButton->getXPos()
+					&& event.button.x >= surrenButton->getXPos() + surrenButton->getWidth() && event.button.y <= surrenButton->getYPos()
+					&& event.button.y >= surrenButton->getYPos() + surrenButton->getHeight())
+					ClickSurren();
+				else if (bet100->isVisible() && (event.button.x <= bet100->getXPos())
+					&& (event.button.x >= bet100->getXPos() + bet100->getWidth()) && (event.button.y <= bet100->getYPos())
+					&& (event.button.y >= bet100->getYPos() + bet100->getHeight()))
+					bet += 100;
+				else if (bet1000->isVisible() && (event.button.x <= bet1000->getXPos())
+					&& (event.button.x >= bet1000->getXPos() + bet1000->getWidth()) && (event.button.y <= bet1000->getYPos())
+					&& (event.button.y >= bet1000->getYPos() + bet1000->getHeight()))
+					bet += 1000;
+				cout << "after if";
+				break;
 			}
 		}
-		else
+		cardInHand = GetCardInHand(hand);
+		bust = false;
+		handTotal = CalculateValue(hand);
+		if (cardInHand == 2)
 		{
-			response = ' ';
-			SetButtonVisible(true, true, false, false);
-			do{
-			
-				if (SDL_GetTicks() - updatedTime >= deltaT)
-				{
-					DrawScreen();
-				}
-			} while (response!='a' && response!='s');
-			if (response == 'a')
+			if (handTotal == 21)
 			{
-				Hit(hand, deckPtr, currentCard, cardInHand);
+				stay = true;
+				std::cout << "Player Gets BlackJack!!" << std::endl;
+				playBlackJack = true;
 			}
 			else
 			{
-				std::cout << "You Stay" << std::endl;
+				DoubleDownOpt(hand, deckPtr, currentCard, cardInHand);
+			}
+			DrawScreen();
+		}
+		else
+		{
+			if (handTotal == 21)
+			{
 				stay = true;
+				std::cout << "You got 21" << std::endl;
+			}
+			else if (handTotal > 21)
+			{
+				stay = true;
+				bust = true;
+				std::cout << "Player bust" << std::endl;
+			}
+			else if (cardInHand == 5)
+			{
+				stay = true;
+				if (handTotal > 21)
+				{
+					bust = true;
+					std::cout << "Player bust" << std::endl;
+				}
+			}
+			else
+			{
+				response = ' ';
+				SetButtonVisible(true, true, false, false);
+				if (response != 'a' && response != 's')
+				{
+
+					if (SDL_GetTicks() - updatedTime >= deltaT)
+					{
+						DrawScreen();
+					}
+				} ;
+				if (response == 'a')
+				{
+					Hit(hand, deckPtr, currentCard, cardInHand);
+				}
+				else
+				{
+					std::cout << "You Stay" << std::endl;
+					stay = true;
+				}
 			}
 		}
-	}
-	if (stay)
-	{
-		SetButtonVisible(false, false, false, false);
-		DrawScreen();
+		if (stay)
+		{
+			SetButtonVisible(false, false, false, false);
+			DrawScreen();
+		}
 	}
 }
 
@@ -181,13 +176,10 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 			{
 				response = ' ';
 				SetButtonVisible(true, true, false, false);
-				do
+				if (response != 'a' && response != 's')
 				{
-					if (SDL_GetTicks() - updatedTime >= deltaT)
-					{
-						DrawScreen();
-					}
-				} while (response != 'a' && response != 's');
+					DrawScreen();
+				} 
 				if (response == 'a')
 				{
 					SplitHit(splitHand, deckPtr, currentCard,splitCardInHand);
@@ -250,12 +242,13 @@ void FPlayer::SplitPlay(Card hand[], Card splitHand[], Card *deckPtr, int curren
 			{
 				response = ' ';
 				SetButtonVisible(true, true, false, false);
-				do{
+				if (response != 'a' && response != 's')
+				{
 					if (SDL_GetTicks() - updatedTime >= deltaT)
 					{
 						DrawScreen();
 					}
-				} while (response != 'a' && response != 's');
+				} ;
 				if (response == 'a')
 				{
 					Hit(hand, deckPtr, currentCard, cardInHand);
@@ -309,25 +302,27 @@ int FPlayer::GetCardInHand(Card hand[])
 
 void FPlayer::MakeBet()
 {
-	while (bet > chips || bet < 1)
+	cardSheet->setVisible(false);
+	if (SDL_GetTicks() - updatedTime >= deltaT)
 	{
-		if (SDL_GetTicks() - updatedTime >= deltaT)
+		if (bet > chips || bet < 1)
 		{
-			std::cin.clear();
-			while (std::cout << "Bet ammount :" && !(std::cin >> bet))
-			{
+			SetButtonVisible(true, false, false, false);
+			response = ' ';
+			bet100->setVisible(true);
+			if (chips > 1000)
+				bet1000->setVisible(true);
+			if (response != 'a' && response != 's')
 				if (SDL_GetTicks() - updatedTime >= deltaT)
 				{
-					std::cin.clear(); //clear bad input flag
-					std::cin.ignore(std::numeric_limits<int>::max(), '\n'); //discard input
-					std::cout << "Invalid input; please re-enter.\n";
+
 					DrawScreen();
 				}
-			}
-			DrawScreen();
 		}
+		chips -= bet;
+		bet100->setVisible(false);
+		bet1000->setVisible(false);
 	}
-	chips -= bet;
 }
 
 int FPlayer::GetBet()
@@ -402,7 +397,7 @@ bool FPlayer::IsSplit(Card hand[],int chips, int bet)
 		if (bet <= chips)
 		{
 			SetButtonVisible(true, true, false, false);
-			while (response != 'a' && response != 's')
+			if (response != 'a' && response != 's')
 			{
 				if (SDL_GetTicks() - updatedTime >= deltaT)
 				{
@@ -520,13 +515,13 @@ void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardI
 	if (bet > chips)
 	{
 		SetButtonVisible(true, true, false, true);
-		do
+		if (response != 'a' && response != 's' && response != 'f');
 		{
 			if (SDL_GetTicks() - updatedTime >= deltaT)
 			{
 				DrawScreen();
 			}
-		} while (response != 'a' && response != 's' && response != 'f');
+		} 
 		if (response == 'a')
 		{
 			Hit(hand, deckPtr, currentCard, cardInHand);
@@ -548,13 +543,12 @@ void FPlayer::DoubleDownOpt(Card hand[],Card *deckPtr,int currentCard, int cardI
 	else
 	{
 		SetButtonVisible(true, true, true, true);
-		do
-		{
+		if (response != 'a' && response != 's' && response != 'd' && response != 'f') {
 			if (SDL_GetTicks() - updatedTime >= deltaT)
 			{
 				DrawScreen();
 			}
-		} while (response != 'a' && response != 's' && response != 'd' && response != 'f');
+		} 
 		if (response == 'd')
 		{
 			Hit(hand, deckPtr, currentCard, cardInHand);
@@ -594,13 +588,13 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCar
 	if (bet > chips)
 	{
 		SetButtonVisible(true, true, false, false);
-		do
+		if (response != 'a' && response != 's')
 		{
 			if (SDL_GetTicks() - updatedTime >= deltaT)
 			{
 				DrawScreen();
 			}
-		} while (response != 'a' && response != 's' );
+		} ;
 		if (response == 'a')
 		{
 			SplitHit(splitHand, deckPtr, currentCard, cardInHand);
@@ -615,13 +609,13 @@ void FPlayer::SplitDoubleDownOpt(Card splitHand[], Card *deckPtr, int currentCar
 	else
 	{
 		SetButtonVisible(true, true, true, false);
-		do
+		if (response != 'a' && response != 's' && response != 'd')
 		{
 			if (SDL_GetTicks() - updatedTime >= deltaT)
 			{
 				DrawScreen();
 			}
-		} while (response != 'a' && response != 's' && response != 'd');
+		} ;
 		
 		doDownButton->setVisible(false);
 		
@@ -677,6 +671,7 @@ void FPlayer::SetButtonVisible(bool hitButton, bool stayButton, bool doDownButto
 void FPlayer::DrawScreen()
 {
 	background->draw();
+	cardSheet->drawCard();
 	for (int i = 0; i < 5; i++)
 	{
 		playerCards[i]->drawCard();
@@ -687,6 +682,8 @@ void FPlayer::DrawScreen()
 	stayButton->drawCard();
 	doDownButton->drawCard();
 	surrenButton->drawCard();
+	bet100->drawCard();
+	bet1000->drawCard();
 
 	SDL_RenderPresent(renderer);
 }

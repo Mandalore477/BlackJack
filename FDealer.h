@@ -40,6 +40,7 @@ public:
 
 	SDL_Renderer *renderer;
 	Sprite *dealerCards[5] = { nullptr, nullptr, nullptr, nullptr, nullptr };
+	BJGraphics *cardSheet = nullptr;
 
 	void DrawScreen();
 

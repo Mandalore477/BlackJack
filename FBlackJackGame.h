@@ -42,7 +42,11 @@ public:
 	Sprite *stayButton = nullptr;
 	Sprite *doDownButton = nullptr;
 	Sprite *surrenButton = nullptr;
+	Sprite *bet100 = nullptr;
+	Sprite *bet1000 = nullptr;
+	
 	SDL_Renderer *renderer = NULL;
+
 
 	void DrawScreen();
 
